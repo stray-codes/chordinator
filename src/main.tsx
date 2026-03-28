@@ -165,12 +165,17 @@ export const Main = () => {
                         </a>
                         <div className="flex gap-2">
                             <a
-                                href="https://github.com/stray-codes/bass-helper"
+                                href="https://github.com/stray-codes/chordinator"
                                 className="hover:text-yellow-300"
                             >
                                 Github
                             </a>
-                            <a className="hover:text-yellow-300">Donate</a>
+                            <a
+                                href="https://ko-fi.com/straycodes"
+                                className="hover:text-yellow-300"
+                            >
+                                Donate
+                            </a>
                             <a
                                 href="https://stray.codes/"
                                 className="hover:text-yellow-300"
@@ -227,12 +232,17 @@ export const Main = () => {
                     </a>
                     <div className="flex gap-2">
                         <a
-                            href="https://github.com/stray-codes/bass-helper"
+                            href="https://github.com/stray-codes/chordinator"
                             className="hover:text-yellow-300"
                         >
                             Github
                         </a>
-                        <a className="hover:text-yellow-300">Donate</a>
+                        <a
+                            href="https://ko-fi.com/straycodes"
+                            className="hover:text-yellow-300"
+                        >
+                            Donate
+                        </a>
                         <a
                             href="https://stray.codes/"
                             className="hover:text-yellow-300"
