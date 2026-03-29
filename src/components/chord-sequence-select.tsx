@@ -5,7 +5,17 @@ import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
 import { Lock, PlusCircle } from "lucide-preact";
 
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogTitle,
+    DialogTrigger,
+} from "./ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { chords } from "../libs/chords";
+import { Button } from "./ui/button";
+import { sequences } from "../libs/sequences";
 
 export const ChordSequenceSelect = ({
     setChord,
@@ -19,6 +29,8 @@ export const ChordSequenceSelect = ({
     const [lockChords, setLockChords] = useState(false);
     const [chordGroup, setChordGroup] = useState("none");
     const [chordInput, setChordInput] = useState("");
+    const [interVals, setIntervals] = useState<number[]>([]);
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         if (chordGroup === "none" && lockChords) setLockChords(false);
@@ -39,6 +51,7 @@ export const ChordSequenceSelect = ({
                 return intervalName;
             })
             .filter((item) => !!item) as string[];
+        setIntervals(tmp.map((item) => Interval.semitones(item)));
         const newChord = [
             ...tmp.map((item) => Note.transpose(currentNote, item)),
         ];
@@ -81,8 +94,219 @@ export const ChordSequenceSelect = ({
                             <PlusCircle />
                         </DialogTrigger>
 
-                        <DialogContent>
-                            <DialogTitle>Chords</DialogTitle>
+                        <DialogContent className="h-9/10 flex flex-col items-start">
+                            <DialogTitle className="sr-only">
+                                Dialog containing lists of chords, sequences and
+                                intervals.
+                            </DialogTitle>
+                            <Tabs
+                                defaultValue="intervals"
+                                className="size-full flex"
+                            >
+                                <TabsList className="w-4/5">
+                                    <TabsTrigger value="chords">
+                                        Chords
+                                    </TabsTrigger>
+                                    <TabsTrigger value="sequences">
+                                        Sequences
+                                    </TabsTrigger>
+                                    <TabsTrigger value="intervals">
+                                        Intervals
+                                    </TabsTrigger>
+                                </TabsList>
+                                <TabsContent
+                                    value="chords"
+                                    className="size-full h-full overflow-hidden flex flex-col gap-2"
+                                >
+                                    <Input
+                                        placeholder="Search..."
+                                        value={search}
+                                        onChange={(e) =>
+                                            setSearch(e.currentTarget.value)
+                                        }
+                                    />
+                                    <div className="flex flex-col h-full w-full overflow-scroll">
+                                        {chords
+                                            .filter((item) =>
+                                                item.label
+                                                    .toLocaleLowerCase()
+                                                    .replace(/\s+/g, "")
+                                                    .includes(
+                                                        search
+                                                            .toLocaleLowerCase()
+                                                            .replace(
+                                                                /\s+/g,
+                                                                "",
+                                                            ),
+                                                    ),
+                                            )
+
+                                            .map((chord) => (
+                                                <DialogClose asChild>
+                                                    <Button
+                                                        className="flex justify-between w-full gap-4"
+                                                        variant="outline"
+                                                        onClick={() => {
+                                                            setChordInput(
+                                                                chord.intervals,
+                                                            );
+                                                            setChordGroup(
+                                                                chord.chordGroup ??
+                                                                    "custom",
+                                                            );
+                                                        }}
+                                                    >
+                                                        <span>
+                                                            {chord.label}
+                                                        </span>
+                                                        <span>
+                                                            {chord.intervals}
+                                                        </span>
+                                                    </Button>
+                                                </DialogClose>
+                                            ))}
+                                    </div>
+                                </TabsContent>
+
+                                <TabsContent
+                                    value="sequences"
+                                    className="size-full h-full overflow-hidden flex flex-col gap-2"
+                                >
+                                    <Input
+                                        placeholder="Search..."
+                                        value={search}
+                                        onChange={(e) =>
+                                            setSearch(e.currentTarget.value)
+                                        }
+                                    />
+                                    <div className="flex flex-col h-full w-full overflow-scroll">
+                                        {sequences
+                                            .filter((item) =>
+                                                item.label
+                                                    .toLocaleLowerCase()
+                                                    .replace(/\s+/g, "")
+                                                    .includes(
+                                                        search
+                                                            .toLocaleLowerCase()
+                                                            .replace(
+                                                                /\s+/g,
+                                                                "",
+                                                            ),
+                                                    ),
+                                            )
+
+                                            .map((sequence) => (
+                                                <DialogClose asChild>
+                                                    <Button
+                                                        className="flex justify-between w-full gap-4"
+                                                        variant="outline"
+                                                        onClick={() => {
+                                                            setChordInput(
+                                                                sequence.intervals,
+                                                            );
+                                                            setChordGroup(
+                                                                sequence.chordGroup ??
+                                                                    "custom",
+                                                            );
+                                                        }}
+                                                    >
+                                                        <span>
+                                                            {sequence.label}
+                                                        </span>
+                                                        <span>
+                                                            {sequence.intervals}
+                                                        </span>
+                                                    </Button>
+                                                </DialogClose>
+                                            ))}
+                                    </div>
+                                </TabsContent>
+
+                                <TabsContent
+                                    value="intervals"
+                                    className="size-full h-8/12 flex flex-col gap-2"
+                                >
+                                    <ToggleGroup
+                                        type="multiple"
+                                        className="flex flex-col w-full h-full overflow-scroll *:hover:bg-transparent *:data-[state=on]:bg-transparent *:w-full *:data-[state=on]:text-yellow-300  *:hover:text-cyan-300"
+                                        value={interVals.map((item) =>
+                                            String(item),
+                                        )}
+                                        onValueChange={(value) => {
+                                            setChordInput(
+                                                value
+                                                    .sort(
+                                                        (a, b) =>
+                                                            Number(a) -
+                                                            Number(b),
+                                                    )
+                                                    .join(", "),
+                                            );
+                                        }}
+                                    >
+                                        <ToggleGroupItem value="0">
+                                            Unison
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="1">
+                                            Minor Second
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="2">
+                                            Major Second
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="3">
+                                            Minor Third
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="4">
+                                            Major Third
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="5">
+                                            Perfect Fourth
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="6">
+                                            Augmented Fourth
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="7">
+                                            Perfect Fifth
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="8">
+                                            Minor Sixth
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="9">
+                                            Major Sixth
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="10">
+                                            Minor Seventh
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="11">
+                                            Major Seventh
+                                        </ToggleGroupItem>
+                                        <ToggleGroupItem value="12">
+                                            Octave
+                                        </ToggleGroupItem>
+                                    </ToggleGroup>
+                                    {chordInput.length > 0 ? (
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => {
+                                                setChordInput("");
+                                            }}
+                                        >
+                                            None
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => {
+                                                setChordInput(
+                                                    "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12",
+                                                );
+                                            }}
+                                        >
+                                            All
+                                        </Button>
+                                    )}
+                                </TabsContent>
+                            </Tabs>
                         </DialogContent>
                     </Dialog>
                 </div>

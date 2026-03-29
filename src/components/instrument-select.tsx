@@ -80,6 +80,7 @@ export const InstrumentSelect = ({
                                 setSearchFilter(e.currentTarget.value)
                             }
                             value={searchFilter}
+                            placeholder="Search..."
                         />
                         <div className="flex flex-col h-full w-full overflow-scroll">
                             {instruments
@@ -101,7 +102,8 @@ export const InstrumentSelect = ({
                                             onClick={() => {
                                                 setStrings(instrument.strings);
                                                 setStringGroup(
-                                                    instrument.group,
+                                                    instrument.group ??
+                                                        "custom",
                                                 );
                                                 setMaxNumberOfFrets(
                                                     instrument.maxNumberOfFrets,
