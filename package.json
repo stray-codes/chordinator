@@ -16,6 +16,7 @@
 		"preact": "^10.26.9",
 		"radix-ui": "^1.4.3",
 		"shadcn": "^4.1.1",
+		"sonner": "^2.0.7",
 		"tailwind-merge": "^3.5.0",
 		"tailwindcss": "^4.2.2",
 		"tonal": "^6.4.3",

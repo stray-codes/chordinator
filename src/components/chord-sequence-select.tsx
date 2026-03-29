@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { chords } from "../libs/chords";
 import { Button } from "./ui/button";
 import { sequences } from "../libs/sequences";
+import { toast } from "sonner";
 
 export const ChordSequenceSelect = ({
     setChord,
@@ -31,6 +32,8 @@ export const ChordSequenceSelect = ({
     const [chordInput, setChordInput] = useState("");
     const [interVals, setIntervals] = useState<number[]>([]);
     const [search, setSearch] = useState("");
+
+    const [lockInfoNotified, setLockInfoNotified] = useState(false);
 
     useEffect(() => {
         if (chordGroup === "none" && lockChords) setLockChords(false);
@@ -57,7 +60,16 @@ export const ChordSequenceSelect = ({
         ];
         setChord(newChord.map((item) => Note.midi(item)!));
         const newChordNames = Chord.detect(newChord);
-        if (newChordNames.length >= 1) setChordName(newChordNames.join(", "));
+        if (newChordNames.length >= 1) {
+            setChordName(newChordNames.join(", "));
+            if (!lockInfoNotified) {
+                setLockInfoNotified(true);
+                toast.message("Press space to lock!", {
+                    description:
+                        "If you press space, the currently selected interval, chord or sequence will be locked in place.",
+                });
+            }
+        }
     }, [chordInput, currentNote]);
 
     useEffect(() => {

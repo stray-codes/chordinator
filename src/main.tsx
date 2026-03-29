@@ -7,6 +7,7 @@ import useWindowDimensions from "./libs/screen-width";
 import { MadeBy } from "./components/made-by";
 import { InstrumentSelect } from "./components/instrument-select";
 import { ChordSequenceSelect } from "./components/chord-sequence-select";
+import { Toaster } from "sonner";
 
 export const Main = () => {
     const [currentMidi, setCurrentMidi] = useState<number>(
@@ -37,49 +38,68 @@ export const Main = () => {
         );
 
     return (
-        <div className="flex flex-col gap-4 h-vh items-center justify-between px-4 pb-4 min-h-screen bg-[#0c0c0c]">
-            <Piano
-                synth={synth}
-                currentMidi={currentMidi}
-                setCurrentMidi={setCurrentMidi}
-                chord={chord}
-            />
-
-            <div className="flex flex-col items-center justify-center gap-1">
-                <span className="text-3xl">
-                    {Note.enharmonic(currentNote) !== currentNote &&
-                        `${Note.enharmonic(currentNote)} / `}
-                    {currentNote}
-                </span>
-                <span className="text-xs">
-                    {Note.freq(currentNote)?.toFixed(1)}hz
-                </span>
-                <span className="text-yellow-300">{chordName}</span>
-            </div>
-            <StringInstrument
-                tuning={tuning}
-                currentMidi={currentMidi}
-                setCurrentMidi={setCurrentMidi}
-                synth={synth}
-                chord={chord}
-                maxNumberOfFrets={maxNumberOfFrets}
-            />
-            <div className="flex flex-row justify-between items-end gap-2 w-full flex-wrap">
-                <ChordSequenceSelect
-                    setChord={setChord}
-                    setChordName={setChordName}
-                    currentNote={currentNote}
+        <div>
+            <div className="flex flex-col gap-4 h-vh items-center justify-between px-4 pb-4 min-h-screen bg-[#0c0c0c]">
+                <Piano
+                    synth={synth}
+                    currentMidi={currentMidi}
+                    setCurrentMidi={setCurrentMidi}
+                    chord={chord}
                 />
 
-                {width > 1300 && <MadeBy />}
-
-                <InstrumentSelect
-                    setTuning={setTuning}
+                <div className="flex flex-col items-center justify-center gap-1">
+                    <span className="text-3xl">
+                        {Note.enharmonic(currentNote) !== currentNote &&
+                            `${Note.enharmonic(currentNote)} / `}
+                        {currentNote}
+                    </span>
+                    <span className="text-xs">
+                        {Note.freq(currentNote)?.toFixed(1)}hz
+                    </span>
+                    <span className="text-yellow-300">{chordName}</span>
+                </div>
+                <StringInstrument
+                    tuning={tuning}
+                    currentMidi={currentMidi}
+                    setCurrentMidi={setCurrentMidi}
+                    synth={synth}
+                    chord={chord}
                     maxNumberOfFrets={maxNumberOfFrets}
-                    setMaxNumberOfFrets={setMaxNumberOfFrets}
                 />
+                <div className="flex flex-row justify-between items-end gap-2 w-full flex-wrap">
+                    <ChordSequenceSelect
+                        setChord={setChord}
+                        setChordName={setChordName}
+                        currentNote={currentNote}
+                    />
+
+                    {width > 1300 && <MadeBy />}
+
+                    <InstrumentSelect
+                        setTuning={setTuning}
+                        maxNumberOfFrets={maxNumberOfFrets}
+                        setMaxNumberOfFrets={setMaxNumberOfFrets}
+                    />
+                </div>
+                {width <= 1300 && <MadeBy />}
             </div>
-            {width <= 1300 && <MadeBy />}
+
+            <Toaster
+                position="top-right"
+                duration={10000}
+                toastOptions={{
+                    style: {
+                        background: "#0c0c0c",
+                        color: "white",
+                        fontSize: "0.6rem",
+                    },
+                    classNames: {
+                        toast: "!border-secondary",
+                        title: "!text-yellow-400",
+                        description: "!text-white/80",
+                    },
+                }}
+            />
         </div>
     );
 };
