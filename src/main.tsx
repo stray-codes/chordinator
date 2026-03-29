@@ -6,6 +6,7 @@ import { Piano } from "./components/piano";
 import { ToggleGroup, ToggleGroupItem } from "./components/ui/toggle-group";
 import { Input } from "./components/ui/input";
 import useWindowDimensions from "./libs/screen-width";
+import { Toggle } from "./components/ui/toggle";
 
 export const Main = () => {
     const [currentMidi, setCurrentMidi] = useState<number>(
@@ -15,6 +16,8 @@ export const Main = () => {
         () => Note.fromMidi(currentMidi),
         [currentMidi],
     );
+
+    const [lockChords, setLockChords] = useState(false);
 
     const [stringGroup, setStringGroup] = useState("bass");
     const [strings, setStrings] = useState("E1, A1, D2, G2");
@@ -37,6 +40,7 @@ export const Main = () => {
     const [chord, setChord] = useState<number[]>([]);
 
     useEffect(() => {
+        if (lockChords) return;
         setChordName("-");
         const tmp = chordInput
             .split(/,\s*/)
@@ -57,6 +61,25 @@ export const Main = () => {
         const newChordNames = Chord.detect(newChord);
         if (newChordNames.length >= 1) setChordName(newChordNames.join(", "));
     }, [chordInput, currentNote]);
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.code === "Space") {
+                if (
+                    e.target.tagName === "INPUT" ||
+                    e.target.tagName === "TEXTAREA"
+                )
+                    return;
+                e.preventDefault();
+                setLockChords((prev) => {
+                    return !prev;
+                });
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, []);
 
     const synth = useMemo(() => new Tone.Synth().toDestination(), []);
 
@@ -96,15 +119,26 @@ export const Main = () => {
             />
             <div className="flex flex-row justify-between items-end gap-2 w-full flex-wrap">
                 <div className="border p-2 flex flex-col items-center gap-2 w-full lg:w-fit">
+                    <div className="flex items-center justify-between w-full text-xs">
+                        <Toggle
+                            className="text-xs h-5"
+                            pressed={lockChords}
+                            onPressedChange={(value) => setLockChords(value)}
+                            disabled={chordGroup === "none"}
+                        >
+                            lock
+                        </Toggle>
+                        <div>more+</div>
+                    </div>
                     <ToggleGroup
                         type="single"
                         value={chordGroup}
-                        className=""
                         onValueChange={(value) => {
                             if (value) {
                                 setChordGroup(value);
                                 switch (value) {
                                     case "none":
+                                        setLockChords(false);
                                         setChordInput("");
                                         break;
                                     case "major":
@@ -113,8 +147,8 @@ export const Main = () => {
                                     case "minor":
                                         setChordInput("0, 3, 7");
                                         break;
-                                    case "maj7":
-                                        setChordInput("0, 4, 7, 11");
+                                    case "pentatonic":
+                                        setChordInput("0, 2, 4, 7, 9");
                                         break;
                                 }
                             }
@@ -134,10 +168,10 @@ export const Main = () => {
                             Minor
                         </ToggleGroupItem>
                         <ToggleGroupItem
-                            value="maj7"
+                            value="pentatonic"
                             className="data-[state=on]:text-yellow-300"
                         >
-                            Maj7
+                            Penta.
                         </ToggleGroupItem>
                         <ToggleGroupItem
                             value="custom"
@@ -186,7 +220,8 @@ export const Main = () => {
                     </div>
                 )}
 
-                <div className="border p-2 flex flex-col items-center gap-2 w-full lg:w-fit">
+                <div className="border p-2 flex flex-col items-end justify-center gap-2 w-full lg:w-fit">
+                    <div className="text-xs">more +</div>
                     <ToggleGroup
                         type="single"
                         value={stringGroup}
