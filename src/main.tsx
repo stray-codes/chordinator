@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useMemo, useState } from "preact/hooks";
 import * as Tone from "tone";
-import { Chord, Interval, Note } from "tonal";
+import { Note } from "tonal";
 import { StringInstrument } from "./components/string-instrument";
 import { Piano } from "./components/piano";
-import { ToggleGroup, ToggleGroupItem } from "./components/ui/toggle-group";
-import { Input } from "./components/ui/input";
 import useWindowDimensions from "./libs/screen-width";
-import { Toggle } from "./components/ui/toggle";
+import { MadeBy } from "./components/made-by";
+import { InstrumentSelect } from "./components/instrument-select";
+import { ChordSequenceSelect } from "./components/chord-sequence-select";
 
 export const Main = () => {
     const [currentMidi, setCurrentMidi] = useState<number>(
@@ -17,69 +17,12 @@ export const Main = () => {
         [currentMidi],
     );
 
-    const [lockChords, setLockChords] = useState(false);
-
-    const [stringGroup, setStringGroup] = useState("bass");
-    const [strings, setStrings] = useState("E1, A1, D2, G2");
     const [tuning, setTuning] = useState(["E1", "A1", "D2", "G2"].reverse());
 
-    const { width } = useWindowDimensions();
-
-    useEffect(() => {
-        let tmp = strings.split(/,\s*/);
-        tmp = tmp.map((item) => Note.simplify(item));
-        for (const item of tmp) {
-            if (item.length === 0) return;
-        }
-        setTuning(tmp.reverse());
-    }, [strings]);
-
-    const [chordGroup, setChordGroup] = useState("none");
-    const [chordInput, setChordInput] = useState("");
-    const [chordName, setChordName] = useState<string>("-");
     const [chord, setChord] = useState<number[]>([]);
+    const [chordName, setChordName] = useState<string>("-");
 
-    useEffect(() => {
-        if (lockChords) return;
-        setChordName("-");
-        const tmp = chordInput
-            .split(/,\s*/)
-            .map((item) => {
-                if (item === null) return null;
-                if (item.length === 0) return null;
-                const semitone = Number(item);
-                if (!isNaN(semitone)) return Interval.fromSemitones(semitone);
-                const intervalName = Interval.name(item);
-                if (intervalName.length === 0) return null;
-                return intervalName;
-            })
-            .filter((item) => !!item) as string[];
-        const newChord = [
-            ...tmp.map((item) => Note.transpose(currentNote, item)),
-        ];
-        setChord(newChord.map((item) => Note.midi(item)!));
-        const newChordNames = Chord.detect(newChord);
-        if (newChordNames.length >= 1) setChordName(newChordNames.join(", "));
-    }, [chordInput, currentNote]);
-
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.code === "Space") {
-                if (
-                    e.target.tagName === "INPUT" ||
-                    e.target.tagName === "TEXTAREA"
-                )
-                    return;
-                e.preventDefault();
-                setLockChords((prev) => {
-                    return !prev;
-                });
-            }
-        };
-
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, []);
+    const { width } = useWindowDimensions();
 
     const synth = useMemo(() => new Tone.Synth().toDestination(), []);
 
@@ -118,175 +61,17 @@ export const Main = () => {
                 chord={chord}
             />
             <div className="flex flex-row justify-between items-end gap-2 w-full flex-wrap">
-                <div className="border p-2 flex flex-col items-center gap-2 w-full lg:w-fit">
-                    <div className="flex items-center justify-between w-full text-xs">
-                        <Toggle
-                            className="text-xs h-5"
-                            pressed={lockChords}
-                            onPressedChange={(value) => setLockChords(value)}
-                            disabled={chordGroup === "none"}
-                        >
-                            lock
-                        </Toggle>
-                        <div>more+</div>
-                    </div>
-                    <ToggleGroup
-                        type="single"
-                        value={chordGroup}
-                        onValueChange={(value) => {
-                            if (value) {
-                                setChordGroup(value);
-                                switch (value) {
-                                    case "none":
-                                        setLockChords(false);
-                                        setChordInput("");
-                                        break;
-                                    case "major":
-                                        setChordInput("0, 4, 7");
-                                        break;
-                                    case "minor":
-                                        setChordInput("0, 3, 7");
-                                        break;
-                                    case "pentatonic":
-                                        setChordInput("0, 2, 4, 7, 9");
-                                        break;
-                                }
-                            }
-                        }}
-                    >
-                        <ToggleGroupItem value="none">None</ToggleGroupItem>
-                        <ToggleGroupItem
-                            value="major"
-                            className="data-[state=on]:text-yellow-300"
-                        >
-                            Major
-                        </ToggleGroupItem>
-                        <ToggleGroupItem
-                            value="minor"
-                            className="data-[state=on]:text-yellow-300"
-                        >
-                            Minor
-                        </ToggleGroupItem>
-                        <ToggleGroupItem
-                            value="pentatonic"
-                            className="data-[state=on]:text-yellow-300"
-                        >
-                            Penta.
-                        </ToggleGroupItem>
-                        <ToggleGroupItem
-                            value="custom"
-                            className="data-[state=on]:text-yellow-300"
-                        >
-                            Custom
-                        </ToggleGroupItem>
-                    </ToggleGroup>
-                    <Input
-                        value={chordInput}
-                        onChange={(e) => {
-                            setChordGroup("custom");
-                            setChordInput(e.currentTarget.value);
-                        }}
-                    />
-                </div>
+                <ChordSequenceSelect
+                    setChord={setChord}
+                    setChordName={setChordName}
+                    currentNote={currentNote}
+                />
 
-                {width > 1300 && (
-                    <div className="border p-2 flex flex-col items-center justify-center h-fit gap-2 text-xs">
-                        <a
-                            className="text-cyan-400"
-                            href="https://stray.codes/"
-                        >
-                            Made by Karol Czopek
-                        </a>
-                        <div className="flex gap-2">
-                            <a
-                                href="https://github.com/stray-codes/chordinator"
-                                className="hover:text-yellow-300"
-                            >
-                                Github
-                            </a>
-                            <a
-                                href="https://ko-fi.com/straycodes"
-                                className="hover:text-yellow-300"
-                            >
-                                Donate
-                            </a>
-                            <a
-                                href="https://stray.codes/"
-                                className="hover:text-yellow-300"
-                            >
-                                Homepage
-                            </a>
-                        </div>
-                    </div>
-                )}
+                {width > 1300 && <MadeBy />}
 
-                <div className="border p-2 flex flex-col items-end justify-center gap-2 w-full lg:w-fit">
-                    <div className="text-xs">more +</div>
-                    <ToggleGroup
-                        type="single"
-                        value={stringGroup}
-                        onValueChange={(value) => {
-                            if (value) {
-                                setStringGroup(value);
-                                switch (value) {
-                                    case "guitar":
-                                        setStrings("E2, A2, D3, G3, B3, E4");
-                                        break;
-                                    case "bass":
-                                        setStrings("E1, A1, D2, G2");
-                                        break;
-                                    case "violin":
-                                        setStrings("G3, D4, A4, E5");
-                                        break;
-                                    case "cello":
-                                        setStrings("C2, G2, D3, A3");
-                                        break;
-                                }
-                            }
-                        }}
-                    >
-                        <ToggleGroupItem value="guitar">Guitar</ToggleGroupItem>
-                        <ToggleGroupItem value="bass">Bass</ToggleGroupItem>
-                        <ToggleGroupItem value="violin">Violin</ToggleGroupItem>
-                        <ToggleGroupItem value="cello">Cello</ToggleGroupItem>
-                        <ToggleGroupItem value="custom">Custom</ToggleGroupItem>
-                    </ToggleGroup>
-                    <Input
-                        value={strings}
-                        onChange={(e) => {
-                            setStringGroup("custom");
-                            setStrings(e.currentTarget.value);
-                        }}
-                    />
-                </div>
+                <InstrumentSelect setTuning={setTuning} />
             </div>
-            {width <= 1300 && (
-                <div className="border p-2 flex items-center justify-between w-full h-fit gap-2 text-xs">
-                    <a className="text-cyan-400" href="https://stray.codes/">
-                        Made by Karol Czopek
-                    </a>
-                    <div className="flex gap-2">
-                        <a
-                            href="https://github.com/stray-codes/chordinator"
-                            className="hover:text-yellow-300"
-                        >
-                            Github
-                        </a>
-                        <a
-                            href="https://ko-fi.com/straycodes"
-                            className="hover:text-yellow-300"
-                        >
-                            Donate
-                        </a>
-                        <a
-                            href="https://stray.codes/"
-                            className="hover:text-yellow-300"
-                        >
-                            Homepage
-                        </a>
-                    </div>
-                </div>
-            )}
+            {width <= 1300 && <MadeBy />}
         </div>
     );
 };
