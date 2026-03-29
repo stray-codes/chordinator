@@ -5,6 +5,8 @@ import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
 import { Lock, PlusCircle } from "lucide-preact";
 
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
+
 export const ChordSequenceSelect = ({
     setChord,
     setChordName,
@@ -17,6 +19,10 @@ export const ChordSequenceSelect = ({
     const [lockChords, setLockChords] = useState(false);
     const [chordGroup, setChordGroup] = useState("none");
     const [chordInput, setChordInput] = useState("");
+
+    useEffect(() => {
+        if (chordGroup === "none" && lockChords) setLockChords(false);
+    }, [chordGroup, lockChords]);
 
     useEffect(() => {
         if (lockChords) return;
@@ -69,12 +75,23 @@ export const ChordSequenceSelect = ({
                 >
                     <Lock className="size-3" />
                 </Toggle>
-                <PlusCircle />
+                <div className="w-full flex justify-end">
+                    <Dialog>
+                        <DialogTrigger className="hover:text-yellow-300">
+                            <PlusCircle />
+                        </DialogTrigger>
+
+                        <DialogContent>
+                            <DialogTitle>Chords</DialogTitle>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
             <ToggleGroup
                 type="single"
                 value={chordGroup}
                 onValueChange={(value) => {
+                    setLockChords(false);
                     if (value) {
                         setChordGroup(value);
                         switch (value) {

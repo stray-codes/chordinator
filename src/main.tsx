@@ -29,7 +29,7 @@ export const Main = () => {
     if (width < 540)
         return (
             <div className="size-full flex items-center justify-center text-xs">
-                <span>Mobile Version comming soon.</span>
+                <span>Mobile Version coming soon.</span>
             </div>
         );
 

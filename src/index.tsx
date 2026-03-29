@@ -4,11 +4,7 @@ import "./style.css";
 import { Main } from "./main";
 
 export function App() {
-    return (
-        <div className="h-screen w-screen">
-            <Main />
-        </div>
-    );
+    return <Main />;
 }
 
 render(<App />, document.getElementById("app"));
