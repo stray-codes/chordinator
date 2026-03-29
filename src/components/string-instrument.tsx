@@ -9,18 +9,26 @@ export const StringInstrument = ({
     currentMidi,
     setCurrentMidi,
     chord,
+    maxNumberOfFrets,
 }: {
-    tuning: String[];
+    tuning: string[];
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
     chord: number[];
+    maxNumberOfFrets: number | undefined;
 }) => {
     const { width } = useWindowDimensions();
+    const numberOfFretsScreenWidth = width / 80;
+    const numberOfFrets = Number.isInteger(maxNumberOfFrets)
+        ? numberOfFretsScreenWidth < maxNumberOfFrets!
+            ? numberOfFretsScreenWidth
+            : maxNumberOfFrets!
+        : numberOfFretsScreenWidth;
     return (
         <div className="flex-col w-full">
             <div className="flex flex-row w-full">
-                <div className="flex flex-col w-full">
+                <div className="flex flex-col w-14 shrink-0">
                     {tuning.map((note) => {
                         const thisMidi = Note.midi(note as NoteLiteral) ?? 0;
                         const isCurrentNote = currentMidi === thisMidi;
@@ -70,27 +78,41 @@ export const StringInstrument = ({
                         );
                     })}
                 </div>
-                {Array.from({ length: width / 80 }, (_, i) => i).map(
-                    (index) => (
-                        <Fret
-                            index={index}
-                            tuning={tuning}
-                            currentMidi={currentMidi}
-                            setCurrentMidi={setCurrentMidi}
-                            synth={synth}
-                            chord={chord}
-                        />
-                    ),
+                {Array.from({ length: numberOfFrets }, (_, i) => i).map(
+                    (index) => {
+                        return (
+                            <Fret
+                                index={index}
+                                tuning={tuning}
+                                currentMidi={currentMidi}
+                                setCurrentMidi={setCurrentMidi}
+                                synth={synth}
+                                chord={chord}
+                            />
+                        );
+                    },
+                )}
+                {numberOfFrets === 0 && (
+                    <Fret
+                        index={-1}
+                        tuning={tuning}
+                        currentMidi={currentMidi}
+                        setCurrentMidi={setCurrentMidi}
+                        synth={synth}
+                        chord={chord}
+                    />
                 )}
             </div>
 
-            <div className="flex w-full">
-                {Array.from({ length: width / 80 + 1 }, (_, i) => i).map(
-                    (index) => (
-                        <Dots index={index} />
-                    ),
-                )}
-            </div>
+            {numberOfFrets > 3 && (
+                <div className="flex w-full">
+                    {Array.from({ length: numberOfFrets + 1 }, (_, i) => i).map(
+                        (index) => (
+                            <Dots index={index} />
+                        ),
+                    )}
+                </div>
+            )}
         </div>
     );
 };
@@ -104,7 +126,7 @@ const Fret = ({
     chord,
 }: {
     index: number;
-    tuning: String[];
+    tuning: string[];
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
@@ -185,7 +207,12 @@ const String = ({
 
 const Dots = ({ index }: { index: number }) => {
     return (
-        <div className="flex justify-center items-center w-full h-5 gap-0.5 ">
+        <div
+            className={
+                "flex justify-center items-center h-5 gap-0.5 " +
+                (index === 0 ? "w-14 shrink-0" : "w-full")
+            }
+        >
             {(index === 1 ||
                 (index !== 0 && [0, 3, 5, 7, 9, 12].includes(index % 12))) && (
                 <div className="bg-white size-0.5 rounded-full" />

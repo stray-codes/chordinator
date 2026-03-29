@@ -15,8 +15,12 @@ import { instruments } from "../libs/instruments";
 
 export const InstrumentSelect = ({
     setTuning,
+    maxNumberOfFrets,
+    setMaxNumberOfFrets,
 }: {
     setTuning: (value: string[]) => void;
+    maxNumberOfFrets: number | undefined;
+    setMaxNumberOfFrets: (value: number | undefined) => void;
 }) => {
     const [stringGroup, setStringGroup] = useState("bass");
     const [strings, setStrings] = useState("E1, A1, D2, G2");
@@ -34,7 +38,6 @@ export const InstrumentSelect = ({
             }
             return simplifiedNote;
         });
-        console.log(tmp);
         for (const item of tmp) {
             if (item.length === 0) return;
         }
@@ -43,7 +46,28 @@ export const InstrumentSelect = ({
 
     return (
         <div className="border p-2 flex flex-col items-center justify-center gap-2 w-full lg:w-fit">
-            <div className="w-full flex justify-end">
+            <div className="w-full flex justify-between">
+                <Input
+                    type="number"
+                    min={0}
+                    step={1}
+                    className="max-w-21 text-xs h-5"
+                    placeholder="Frets"
+                    value={maxNumberOfFrets}
+                    onChange={(e) => {
+                        const value = e.currentTarget.value;
+                        if (value.length === 0) {
+                            setMaxNumberOfFrets(undefined);
+                            return;
+                        }
+                        const parsedValue = Number(value);
+                        if (!Number.isInteger(parsedValue)) {
+                            setMaxNumberOfFrets(undefined);
+                            return;
+                        }
+                        setMaxNumberOfFrets(parsedValue);
+                    }}
+                />
                 <Dialog>
                     <DialogTrigger className="hover:text-cyan-300">
                         <PlusCircle />
@@ -79,6 +103,9 @@ export const InstrumentSelect = ({
                                                 setStringGroup(
                                                     instrument.group,
                                                 );
+                                                setMaxNumberOfFrets(
+                                                    instrument.maxNumberOfFrets,
+                                                );
                                             }}
                                         >
                                             <span>{instrument.label}</span>
@@ -101,15 +128,19 @@ export const InstrumentSelect = ({
                         switch (value) {
                             case "guitar":
                                 setStrings("E2, A2, D3, G3, B3, E4");
+                                setMaxNumberOfFrets(undefined);
                                 break;
                             case "bass":
                                 setStrings("E1, A1, D2, G2");
+                                setMaxNumberOfFrets(undefined);
                                 break;
                             case "violin":
                                 setStrings("G3, D4, A4, E5");
+                                setMaxNumberOfFrets(undefined);
                                 break;
                             case "cello":
                                 setStrings("C2, G2, D3, A3");
+                                setMaxNumberOfFrets(undefined);
                                 break;
                         }
                     }

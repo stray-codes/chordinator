@@ -18,6 +18,9 @@ export const Main = () => {
     );
 
     const [tuning, setTuning] = useState(["E1", "A1", "D2", "G2"].reverse());
+    const [maxNumberOfFrets, setMaxNumberOfFrets] = useState<
+        number | undefined
+    >();
 
     const [chord, setChord] = useState<number[]>([]);
     const [chordName, setChordName] = useState<string>("-");
@@ -59,6 +62,7 @@ export const Main = () => {
                 setCurrentMidi={setCurrentMidi}
                 synth={synth}
                 chord={chord}
+                maxNumberOfFrets={maxNumberOfFrets}
             />
             <div className="flex flex-row justify-between items-end gap-2 w-full flex-wrap">
                 <ChordSequenceSelect
@@ -69,7 +73,11 @@ export const Main = () => {
 
                 {width > 1300 && <MadeBy />}
 
-                <InstrumentSelect setTuning={setTuning} />
+                <InstrumentSelect
+                    setTuning={setTuning}
+                    maxNumberOfFrets={maxNumberOfFrets}
+                    setMaxNumberOfFrets={setMaxNumberOfFrets}
+                />
             </div>
             {width <= 1300 && <MadeBy />}
         </div>

@@ -1,4 +1,11 @@
-export const instruments = [
+export type Instrument = {
+    label: string;
+    group: "guitar" | "bass" | "violin" | "cello" | "custom";
+    strings: string;
+    maxNumberOfFrets?: number;
+};
+
+export const instruments: Instrument[] = [
     { label: "Baglama", group: "custom", strings: "D2, A2, E3" },
     { label: "Balalaika", group: "custom", strings: "E2, E2, A2" },
     { label: "Bandurria", group: "custom", strings: "G2, D3, A3, E4, B4, F5" },
@@ -42,26 +49,30 @@ export const instruments = [
     { label: "Guitarlele", group: "guitar", strings: "A2, D3, G3, C4, E4, A4" },
     { label: "Guqin", group: "custom", strings: "C2, D2, F2, G2, A2, C3, D3" },
     {
-        label: "Harp (Concert)",
+        label: "Harp",
         group: "custom",
         strings:
             "C1, D1, E1, F1, G1, A1, B1, C2, D2, E2, F2, G2, A2, B2, C3, D3, E3, F3, G3, A3, B3, C4, D4, E4, F4, G4, A4, B4, C5, D5, E5, F5, G5, A5, B5, C6, D6, E6, F6, G6, A6, B6, C7",
+        maxNumberOfFrets: 0,
     },
     {
         label: "Kora",
         group: "custom",
         strings:
             "F2, G2, A2, C3, D3, E3, F3, G3, A3, C4, D4, E4, F4, G4, A4, C5, D5, E5, F5, G5",
+        maxNumberOfFrets: 0,
     },
     {
         label: "Koto (Hirajoshi in D )",
         group: "custom",
         strings: "D4, G3, A3, Bb3, D4, Eb4, G4, A4, Bb4, D5, Eb5, G5, A5",
+        maxNumberOfFrets: 0,
     },
     {
         label: "Koto (Kumoijoshi in D)",
         group: "custom",
         strings: "D4, G3, Ab3, C4, D4, Eb4, G4, Ab4, C5, D5, Eb5, G5, A5",
+        maxNumberOfFrets: 0,
     },
     {
         label: "Lute (Renaissance)",
