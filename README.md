@@ -8,7 +8,7 @@
 ## How to use?
 Select your instrument on the bottom right of the screen, there are more instruments accessible through the + icon.
 Then select whatever chord/sequence/interval you wan't to visualize on the bottom left of the screen.
-After that just hover over any note on the keyboard or string instrument. Once you are happy with your selection just press space
+After that just hover over any note on the keyboard or string instrument. Once you are happy with your selection just hit space
 to lock your selection. Enjoy!
 
 ## FAQ
