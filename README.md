@@ -1,11 +1,14 @@
-
 <div align="right">
+  <a href="https://www.gnu.org/licenses/agpl-3.0"><img alt="License: AGPL v3" src="https://img.shields.io/badge/License-AGPL_v3-blue.svg"></a>
+  
   <a href="https://liberapay.com/stray.codes/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a>
 </div>
+
+
 <div align="center">
   <img height="128" width="128" src="./public/chordinator.svg">
   <h1><a href="https://chords.stray.codes">Chordinator</a></h1>
-  <h4>A tool to visualize sequences, chords and intervals on string instruments.</h4>
+  <h4>A tool to visualize sequences, chords and intervals of string instruments.</h4>
 </div>
 
 
@@ -14,6 +17,7 @@ Select your instrument on the bottom right of the screen, there are more instrum
 Then select whatever chord/sequence/interval you wan't to visualize on the bottom left of the screen.
 After that just hover over any note on the keyboard or string instrument. Once you are happy with your selection just hit space
 to lock your selection. Enjoy!
+
 
 ## FAQ
  - Why does this program exist?
@@ -34,6 +38,7 @@ I am sharing it for free as I already used a lot of free resources to study the 
 This project uses [Tonal](https://github.com/tonaljs/tonal) and [Tone.js](https://tonejs.github.io/).
  - [Tonal](https://github.com/tonaljs/tonal) is an amazing music theory library. I used it to convert between midi numbers and note names; to detect chord names and many other things.
  - [Tone.js](https://tonejs.github.io/) is a Web Audio framework for creating interactive music in the browser. All sounds you hear on my website are created with this framework.
+
 
 ## Building and Selfhosting
 This project was made with [Preact](https://preactjs.com/).

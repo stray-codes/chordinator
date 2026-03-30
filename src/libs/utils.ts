@@ -1,5 +1,5 @@
 /*
-Chordinator: A tool to visualize chords and intervals on string instruments.
+Chordinator: A tool to visualize sequences, chords and intervals of string instruments.
 Copyright (C) 2026 Karol Czopek
 
 This program is free software: you can redistribute it and/or modify
