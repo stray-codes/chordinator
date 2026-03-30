@@ -29,7 +29,7 @@ import {
     DialogTrigger,
 } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { instruments } from "../libs/instruments";
+import { instruments } from "../../data/instruments";
 
 export const InstrumentSelect = ({
     setTuning,

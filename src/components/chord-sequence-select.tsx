@@ -31,10 +31,10 @@ import {
     DialogTrigger,
 } from "./ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { chords } from "../libs/chords";
 import { Button } from "./ui/button";
-import { sequences } from "../libs/sequences";
 import { toast } from "sonner";
+import { chords } from "../../data/chords";
+import { sequences } from "../../data/sequences";
 
 export const ChordSequenceSelect = ({
     setChord,

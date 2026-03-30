@@ -1,28 +1,3 @@
-/*
-Chordinator: A tool to visualize chords and intervals on string instruments.
-Copyright (C) 2026 Karol Czopek
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as
-published by the Free Software Foundation, either version 3 of the
-License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
-
-export type Instrument = {
-    label: string;
-    group?: "guitar" | "bass" | "violin" | "cello" | "custom";
-    strings: string;
-    maxNumberOfFrets?: number;
-};
-
 export const instruments: Instrument[] = [
     { label: "Baglama", strings: "D2, A2, E3" },
     { label: "Balalaika", strings: "E2, E2, A2" },
@@ -127,3 +102,28 @@ export const instruments: Instrument[] = [
     { label: "Violin", group: "violin", strings: "G3, D4, A4, E5" },
     { label: "Zither", strings: "A2, B2, C3, D3, E3, F3, G3" },
 ];
+
+export type Instrument = {
+    label: string;
+    group?: "guitar" | "bass" | "violin" | "cello" | "custom";
+    strings: string;
+    maxNumberOfFrets?: number;
+};
+
+/*
+Chordinator: A tool to visualize chords and intervals on string instruments.
+Copyright (C) 2026 Karol Czopek
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
