@@ -1,3 +1,7 @@
+
+<div align="right">
+  <a href="https://liberapay.com/stray.codes/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a>
+</div>
 <div align="center">
   <img height="128" width="128" src="./public/chordinator.svg">
   <h1><a href="https://chords.stray.codes">Chordinator</a></h1>
