@@ -54,13 +54,13 @@ export const ChordSequenceSelect = ({
     const [lockInfoNotified, setLockInfoNotified] = useState(false);
 
     useEffect(() => {
-        if (chordGroup === "none" && lockChords) setLockChords(false);
-    }, [chordGroup, lockChords]);
+        setLockChords(false);
+    }, [chordInput]);
 
-    useEffect(() => {
+    const updateIntervals = (newChordInput?: string) => {
         if (lockChords) return;
         setChordName("-");
-        const tmp = chordInput
+        const tmp = (newChordInput ?? chordInput)
             .split(/,\s*/)
             .map((item) => {
                 if (item === null) return null;
@@ -82,13 +82,14 @@ export const ChordSequenceSelect = ({
             setChordName(newChordNames.join(", "));
             if (!lockInfoNotified) {
                 setLockInfoNotified(true);
-                toast.message("Press space to lock!", {
+                toast.message("Hit space to lock!", {
                     description:
-                        "If you press space, the currently selected interval, chord or sequence will be locked in place.",
+                        "If you press space, the currently selected interval, chord or sequence will be locked in place. Press again to release lock.",
                 });
             }
         }
-    }, [chordInput, currentNote]);
+    };
+    useEffect(updateIntervals, [chordInput, currentNote]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -263,14 +264,19 @@ export const ChordSequenceSelect = ({
                                             String(item),
                                         )}
                                         onValueChange={(value) => {
-                                            setChordInput(
-                                                value
-                                                    .sort(
-                                                        (a, b) =>
-                                                            Number(a) -
-                                                            Number(b),
-                                                    )
-                                                    .join(", "),
+                                            setChordGroup("custom");
+                                            const newChordInput = value
+                                                .sort(
+                                                    (a, b) =>
+                                                        Number(a) - Number(b),
+                                                )
+                                                .join(", ");
+                                            setChordInput(newChordInput);
+                                            updateIntervals(newChordInput);
+                                            setIntervals(
+                                                value.map((item) =>
+                                                    Number(item),
+                                                ),
                                             );
                                         }}
                                     >
@@ -345,12 +351,10 @@ export const ChordSequenceSelect = ({
                 type="single"
                 value={chordGroup}
                 onValueChange={(value) => {
-                    setLockChords(false);
                     if (value) {
                         setChordGroup(value);
                         switch (value) {
                             case "none":
-                                setLockChords(false);
                                 setChordInput("");
                                 break;
                             case "major":
