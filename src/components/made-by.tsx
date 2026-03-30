@@ -21,7 +21,7 @@ export const MadeBy = () => {
                     Github
                 </a>
                 <a
-                    href="https://ko-fi.com/straycodes"
+                    href="https://liberapay.com/stray.codes/donate"
                     className="hover:text-yellow-300"
                 >
                     Donate
