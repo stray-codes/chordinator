@@ -20,7 +20,7 @@ I am sharing it for free as I already used a lot of free resources to study the 
 > No and it never will.
 
  -  Can you add string instrument/chord/sequence?
-> Of course, just either create a PR or raise an issue. Check out the ['data'](https://github.com/stray-codes/chordinator/tree/main/data) folder for more info.
+> Of course, just either create a PR or raise an issue. Check out the [`data`](https://github.com/stray-codes/chordinator/tree/main/data) folder for more info.
 
  -  Can you add a new feature?
 > Depends, if I benefit from it myself and have the time and capacity to implement it, then YES.
@@ -31,11 +31,11 @@ This project uses [Tonal](https://github.com/tonaljs/tonal) and [Tone.js](https:
  - [Tonal](https://github.com/tonaljs/tonal) is an amazing music theory library. I used it to convert between midi numbers and note names; to detect chord names and many other things.
  - [Tone.js](https://tonejs.github.io/) is a Web Audio framework for creating interactive music in the browser. All sounds you hear on my website are created with this framework.
 
-## Building Project and Selfhosting
+## Building and Selfhosting
 This project was made with [Preact](https://preactjs.com/).
 You can build and selfhost it yourself.
 
--   `pnpm install` - Install all dependencies
+-   `pnpm install` - Installs all dependencies
 
 -   `pnpm run dev` - Starts a dev server at http://localhost:5173/
 
