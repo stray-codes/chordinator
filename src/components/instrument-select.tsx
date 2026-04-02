@@ -50,7 +50,7 @@ export const InstrumentSelect = ({
         tmp = tmp.map((item) => {
             const simplifiedNote = Note.simplify(item);
             const octave = Note.octave(simplifiedNote);
-            if (!octave) {
+            if (!octave && octave !== 0) {
                 const chroma = Note.chroma(simplifiedNote);
                 return Note.fromMidi(36 + chroma);
             }
@@ -71,7 +71,7 @@ export const InstrumentSelect = ({
                     step={1}
                     className="max-w-21 text-xs h-5"
                     placeholder="Frets"
-                    value={maxNumberOfFrets}
+                    value={maxNumberOfFrets ?? ""}
                     onChange={(e) => {
                         const value = e.currentTarget.value;
                         if (value.length === 0) {
@@ -117,6 +117,13 @@ export const InstrumentSelect = ({
                                         <Button
                                             className="flex justify-between w-full gap-4"
                                             variant="outline"
+                                            style={{
+                                                color:
+                                                    strings ===
+                                                    instrument.strings
+                                                        ? "#1ffffe"
+                                                        : undefined,
+                                            }}
                                             onClick={() => {
                                                 setStrings(instrument.strings);
                                                 setStringGroup(

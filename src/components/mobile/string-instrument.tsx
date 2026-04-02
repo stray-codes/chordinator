@@ -18,10 +18,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import * as Tone from "tone";
 import { Note, NoteLiteral } from "tonal";
-import useWindowDimensions from "../libs/screen-width";
 import { Frequency } from "tone/build/esm/core/type/Units";
 
-export const StringInstrument = ({
+export const StringInstrumentMobile = ({
     tuning,
     synth,
     currentMidi,
@@ -36,18 +35,18 @@ export const StringInstrument = ({
     chord: number[];
     maxNumberOfFrets: number | undefined;
 }) => {
-    const { width } = useWindowDimensions();
-    const numberOfFretsScreenWidth = width / 80;
-    const numberOfFrets = Number.isInteger(maxNumberOfFrets)
-        ? numberOfFretsScreenWidth < maxNumberOfFrets!
-            ? numberOfFretsScreenWidth
-            : maxNumberOfFrets!
-        : numberOfFretsScreenWidth;
+    const fullNumberOfFrets = 40;
+    const numberOfFrets = Number.isNaN(Number(maxNumberOfFrets))
+        ? fullNumberOfFrets
+        : Math.min(maxNumberOfFrets!, fullNumberOfFrets);
     return (
-        <div className="flex-col w-full">
-            <div className="flex flex-row w-full">
-                <div className="flex flex-col w-14 shrink-0">
-                    {tuning.map((note) => {
+        <div className="flex flex-col size-full pr-3 overflow-x-scroll">
+            <div
+                className="flex flex-col flex-1 min-h-0"
+                style={{ minWidth: tuning.length * 18.75 + 20 + "px" }}
+            >
+                <div className="flex flex-1 max-h-10 flex-row h-10 pl-4">
+                    {[...tuning].reverse().map((note) => {
                         const thisMidi = Note.midi(note as NoteLiteral) ?? 0;
                         const isCurrentNote = currentMidi === thisMidi;
                         const isCurrentNoteOctaved =
@@ -62,7 +61,7 @@ export const StringInstrument = ({
 
                         return (
                             <div
-                                className="h-5 text-xs cursor-pointer flex items-center justify-center select-none"
+                                className="text-xs cursor-pointer flex flex-1 items-center justify-center select-none min-w-3"
                                 onMouseEnter={() => {
                                     setCurrentMidi(thisMidi);
                                 }}
@@ -74,7 +73,8 @@ export const StringInstrument = ({
                                     setCurrentMidi(thisMidi);
                                 }}
                             >
-                                <span
+                                <div
+                                    className="text-center text-xs [writing-mode:vertical-rl]"
                                     style={{
                                         color:
                                             isChord || isChordOctaved
@@ -91,46 +91,38 @@ export const StringInstrument = ({
                                     }}
                                 >
                                     {note}
-                                </span>
+                                </div>
                             </div>
                         );
                     })}
                 </div>
-                {Array.from({ length: numberOfFrets }, (_, i) => i).map(
-                    (index) => {
-                        return (
-                            <Fret
-                                index={index}
-                                tuning={tuning}
-                                currentMidi={currentMidi}
-                                setCurrentMidi={setCurrentMidi}
-                                synth={synth}
-                                chord={chord}
-                            />
-                        );
-                    },
-                )}
-                {numberOfFrets === 0 && (
-                    <Fret
-                        index={-1}
-                        tuning={tuning}
-                        currentMidi={currentMidi}
-                        setCurrentMidi={setCurrentMidi}
-                        synth={synth}
-                        chord={chord}
-                    />
-                )}
-            </div>
-
-            {numberOfFrets > 3 && (
-                <div className="flex w-full">
-                    {Array.from({ length: numberOfFrets + 1 }, (_, i) => i).map(
-                        (index) => (
-                            <Dots index={index} />
-                        ),
+                <div className="overflow-y-scroll overflow-x-hidden no-scrollbar flex flex-1 min-h-0 flex-col">
+                    {Array.from({ length: numberOfFrets }, (_, i) => i).map(
+                        (index) => {
+                            return (
+                                <Fret
+                                    index={index}
+                                    tuning={tuning}
+                                    currentMidi={currentMidi}
+                                    setCurrentMidi={setCurrentMidi}
+                                    synth={synth}
+                                    chord={chord}
+                                />
+                            );
+                        },
+                    )}
+                    {numberOfFrets === 0 && (
+                        <Fret
+                            index={-1}
+                            tuning={tuning}
+                            currentMidi={currentMidi}
+                            setCurrentMidi={setCurrentMidi}
+                            synth={synth}
+                            chord={chord}
+                        />
                     )}
                 </div>
-            )}
+            </div>
         </div>
     );
 };
@@ -151,16 +143,21 @@ const Fret = ({
     chord: number[];
 }) => {
     return (
-        <div className="flex flex-col w-full border-l border-white ">
-            {tuning.map((note) => (
-                <String
-                    thisMidi={(Note.midi(note as NoteLiteral) ?? 0) + index + 1}
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
-            ))}
+        <div className="flex grow min-h-10">
+            <Dots index={index + 1} />
+            <div className="flex flex-row w-full border-t border-white ">
+                {[...tuning].reverse().map((note) => (
+                    <String
+                        thisMidi={
+                            (Note.midi(note as NoteLiteral) ?? 0) + index + 1
+                        }
+                        currentMidi={currentMidi}
+                        setCurrentMidi={setCurrentMidi}
+                        synth={synth}
+                        chord={chord}
+                    />
+                ))}
+            </div>
         </div>
     );
 };
@@ -184,12 +181,12 @@ const String = ({
         .includes(thisMidi % 12);
     return (
         <div
-            className="relative w-full h-5 flex items-center justify-center cursor-pointer"
+            className="relative w-full min-w-3 h-full flex items-center justify-center cursor-pointer"
             onMouseEnter={() => {
                 setCurrentMidi(thisMidi);
             }}
             onClick={() => {
-                synth.triggerAttackRelease(Note.fromMidi(currentMidi), "8n");
+                synth.triggerAttackRelease(Note.fromMidi(thisMidi), "8n");
                 setCurrentMidi(thisMidi);
             }}
         >
@@ -218,7 +215,7 @@ const String = ({
                 <div className="size-2 rounded-full bg-yellow-400/50 absolute" />
             )}
 
-            <div className="w-full h-0.5 bg-white" />
+            <div className="h-full w-0.5 bg-white" />
         </div>
     );
 };
@@ -227,8 +224,7 @@ const Dots = ({ index }: { index: number }) => {
     return (
         <div
             className={
-                "flex justify-center items-center h-5 gap-0.5 " +
-                (index === 0 ? "w-14 shrink-0" : "w-full")
+                "flex flex-col justify-center items-center gap-0.5 w-4 shrink-0"
             }
         >
             {(index === 1 ||
@@ -238,6 +234,13 @@ const Dots = ({ index }: { index: number }) => {
 
             {index !== 0 && index % 12 === 0 && (
                 <div className="bg-white size-0.5 rounded-full" />
+            )}
+
+            {(index === 0 ||
+                (index !== 1 && ![0, 3, 5, 7, 9, 12].includes(index % 12))) && (
+                <span className="[writing-mode:vertical-rl] text-xs opacity-50 select-none">
+                    {index}
+                </span>
             )}
         </div>
     );

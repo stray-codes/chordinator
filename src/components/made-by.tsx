@@ -54,3 +54,42 @@ export const MadeBy = () => {
         </div>
     );
 };
+
+export const MadeByMobile = () => {
+    return (
+        <div className="flex flex-col justify-around items-center gap-2 size-full">
+            <div className="flex flex-col gap-2 items-center w-2/3 max-w-[30vh]">
+                <img src="chordinator.svg" className="w-full" />
+                <h1 className="text-xl text-cyan-300">Chordinator</h1>
+            </div>
+            <div className="flex flex-col gap-2 items-center p-1">
+                <a
+                    className="text-yellow-400 text-center"
+                    href="https://stray.codes/"
+                >
+                    Made by Karol Czopek
+                </a>
+                <div className="flex gap-2 flex-wrap items-center justify-center">
+                    <a
+                        href="https://github.com/stray-codes/chordinator"
+                        className="hover:text-yellow-300"
+                    >
+                        Github
+                    </a>
+                    <a
+                        href="https://liberapay.com/stray.codes/donate"
+                        className="hover:text-yellow-300"
+                    >
+                        Donate
+                    </a>
+                    <a
+                        href="https://stray.codes/"
+                        className="hover:text-yellow-300"
+                    >
+                        Homepage
+                    </a>
+                </div>
+            </div>
+        </div>
+    );
+};

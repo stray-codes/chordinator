@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { useEffect, useState } from "preact/hooks";
-import { Chord, Interval, Note, NoteLiteral } from "tonal";
+import { Chord, interval, Interval, Note, NoteLiteral } from "tonal";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
@@ -177,6 +177,13 @@ export const ChordSequenceSelect = ({
                                                     <Button
                                                         className="flex justify-between w-full gap-4"
                                                         variant="outline"
+                                                        style={{
+                                                            color:
+                                                                chordInput ===
+                                                                chord.intervals
+                                                                    ? "#fdc700"
+                                                                    : undefined,
+                                                        }}
                                                         onClick={() => {
                                                             setChordInput(
                                                                 chord.intervals,
@@ -231,6 +238,13 @@ export const ChordSequenceSelect = ({
                                                     <Button
                                                         className="flex justify-between w-full gap-4"
                                                         variant="outline"
+                                                        style={{
+                                                            color:
+                                                                chordInput ===
+                                                                sequence.intervals
+                                                                    ? "#fdc700"
+                                                                    : undefined,
+                                                        }}
                                                         onClick={() => {
                                                             setChordInput(
                                                                 sequence.intervals,

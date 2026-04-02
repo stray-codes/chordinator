@@ -61,7 +61,7 @@ const Octave = ({
     chord: number[];
 }) => {
     return (
-        <div className="flex">
+        <div className="flex relative">
             <div className="flex gap-0.5">
                 <WhiteKey
                     index={index}
@@ -183,7 +183,7 @@ const BlackKey = ({
     synth: Tone.Synth<Tone.SynthOptions>;
     chord: number[];
 }) => {
-    const thisMidi = (Note.midi(note + "1") ?? 0) + 12 * index;
+    const thisMidi = (Note.midi(note + "0") ?? 0) + 12 * index;
     const thisNote = Note.fromMidi(thisMidi);
 
     const isChord = chord.includes(thisMidi);
@@ -235,7 +235,7 @@ const WhiteKey = ({
     synth: Tone.Synth<Tone.SynthOptions>;
     chord: number[];
 }) => {
-    const thisMidi = (Note.midi(note + "1") ?? 0) + 12 * index;
+    const thisMidi = (Note.midi(note + "0") ?? 0) + 12 * index;
     const thisNote = Note.fromMidi(thisMidi);
 
     const isChord = chord.includes(thisMidi);

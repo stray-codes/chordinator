@@ -27,7 +27,7 @@ import { InstrumentSelect } from "./components/instrument-select";
 import { ChordSequenceSelect } from "./components/chord-sequence-select";
 import { Toaster } from "sonner";
 
-export const Main = () => {
+export const Desktop = () => {
     const [currentMidi, setCurrentMidi] = useState<number>(
         Note.midi("C2") ?? 0,
     );
@@ -48,16 +48,9 @@ export const Main = () => {
 
     const synth = useMemo(() => new Tone.Synth().toDestination(), []);
 
-    if (width < 540)
-        return (
-            <div className="size-full flex items-center justify-center text-xs">
-                <span>Mobile Version coming soon.</span>
-            </div>
-        );
-
     return (
-        <div>
-            <div className="flex flex-col gap-4 h-vh items-center justify-between px-4 pb-4 min-h-screen bg-[#0c0c0c]">
+        <div className="min-size-full h-screen overflow-scroll">
+            <div className="flex flex-col gap-4 size-full items-center justify-between px-4 min-h-screen bg-[#0c0c0c]">
                 <Piano
                     synth={synth}
                     currentMidi={currentMidi}
@@ -84,22 +77,24 @@ export const Main = () => {
                     chord={chord}
                     maxNumberOfFrets={maxNumberOfFrets}
                 />
-                <div className="flex flex-row justify-between items-end gap-2 w-full flex-wrap">
-                    <ChordSequenceSelect
-                        setChord={setChord}
-                        setChordName={setChordName}
-                        currentNote={currentNote}
-                    />
+                <div className="flex flex-col gap-4 pb-4 w-full">
+                    <div className="flex flex-row justify-between items-end gap-2 w-full flex-wrap">
+                        <ChordSequenceSelect
+                            setChord={setChord}
+                            setChordName={setChordName}
+                            currentNote={currentNote}
+                        />
 
-                    {width > 1300 && <MadeBy />}
+                        {width > 1300 && <MadeBy />}
 
-                    <InstrumentSelect
-                        setTuning={setTuning}
-                        maxNumberOfFrets={maxNumberOfFrets}
-                        setMaxNumberOfFrets={setMaxNumberOfFrets}
-                    />
+                        <InstrumentSelect
+                            setTuning={setTuning}
+                            maxNumberOfFrets={maxNumberOfFrets}
+                            setMaxNumberOfFrets={setMaxNumberOfFrets}
+                        />
+                    </div>
+                    {width <= 1300 && <MadeBy />}
                 </div>
-                {width <= 1300 && <MadeBy />}
             </div>
 
             <Toaster

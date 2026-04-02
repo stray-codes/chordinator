@@ -19,10 +19,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { render } from "preact";
 
 import "./style.css";
-import { Main } from "./main";
+import { Desktop } from "./desktop";
+import useWindowDimensions from "./libs/screen-width";
+import { Mobile } from "./mobile";
 
 export function App() {
-    return <Main />;
+    const { width } = useWindowDimensions();
+    if (width < 700) return <Mobile />;
+    else return <Desktop />;
 }
 
 render(<App />, document.getElementById("app"));
