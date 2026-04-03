@@ -20,6 +20,7 @@ import { Note } from "tonal";
 import { StringInstrumentMobile } from "./string-instrument";
 import * as Tone from "tone";
 import { PianoMobile } from "./piano";
+import { useMemo } from "preact/hooks";
 
 export const StringsPiano = ({
     tuning,
@@ -29,6 +30,7 @@ export const StringsPiano = ({
     chord,
     maxNumberOfFrets,
     chordName,
+    activeInstrument,
 }: {
     tuning: string[];
     currentMidi: number;
@@ -37,8 +39,12 @@ export const StringsPiano = ({
     chord: number[];
     maxNumberOfFrets: number | undefined;
     chordName: string;
+    activeInstrument: "strings" | "piano";
 }) => {
-    const screenSpace = 60;
+    const screenSpace = useMemo(
+        () => (activeInstrument === "strings" ? 80 : 50),
+        [activeInstrument],
+    );
     return (
         <div className="size-full h-full flex flex-col max-h-full grow-0 overflow-hidden">
             <div className="flex-1 min-h-0 flex">

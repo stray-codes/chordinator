@@ -29,8 +29,10 @@ import { Chord, Interval, Note } from "tonal";
 import { StringsPiano } from "./components/mobile/strings-piano";
 
 export const Mobile = () => {
+    const [activeInstrument, setActiveInstrument] = useState<
+        "strings" | "piano"
+    >("strings");
     const [activeTab, setActiveTab] = useState("strings-piano");
-
     const [currentMidi, setCurrentMidi] = useState<number>(
         Note.midi("C2") ?? 0,
     );
@@ -127,6 +129,7 @@ export const Mobile = () => {
                             chord={chord}
                             maxNumberOfFrets={maxNumberOfFrets}
                             chordName={chordName}
+                            activeInstrument={activeInstrument}
                         />
                     </TabsContent>
                 </div>
@@ -136,7 +139,22 @@ export const Mobile = () => {
                         variant="secondary"
                         className="h-full grow border-0"
                         onClick={() => {
+                            if (activeTab !== "strings-piano") {
+                                setActiveInstrument("strings");
+                            } else {
+                                if (activeInstrument === "strings") {
+                                    setActiveInstrument("piano");
+                                } else {
+                                    setActiveInstrument("strings");
+                                }
+                            }
                             setActiveTab("strings-piano");
+                        }}
+                        style={{
+                            color:
+                                activeInstrument === "strings"
+                                    ? "#fdc700"
+                                    : undefined,
                         }}
                     >
                         Strings
@@ -152,7 +170,22 @@ export const Mobile = () => {
                         className="h-full grow border-0"
                         variant="secondary"
                         onClick={() => {
+                            if (activeTab !== "strings-piano") {
+                                setActiveInstrument("piano");
+                            } else {
+                                if (activeInstrument === "strings") {
+                                    setActiveInstrument("piano");
+                                } else {
+                                    setActiveInstrument("strings");
+                                }
+                            }
                             setActiveTab("strings-piano");
+                        }}
+                        style={{
+                            color:
+                                activeInstrument === "piano"
+                                    ? "#fdc700"
+                                    : undefined,
                         }}
                     >
                         Piano
