@@ -87,7 +87,7 @@ export const Mobile = () => {
     const synth = useMemo(() => new Tone.Synth().toDestination(), []);
 
     return (
-        <div className="w-screen h-screen">
+        <div className="w-screen h-dvh">
             <Tabs
                 className="size-full flex flex-col gap-0"
                 defaultValue="strings-piano"

@@ -118,7 +118,7 @@ const Octave = ({
                     chord={chord}
                 />
             </div>
-            <div className="flex flex-col items-end w-1/2 right-0 gap-2.5 absolute mt-5.75">
+            <div className="flex flex-col items-end w-1/2 right-0 gap-2.5 absolute mt-4.25">
                 <BlackKey
                     index={index}
                     note="Db"
@@ -136,7 +136,7 @@ const Octave = ({
                     chord={chord}
                 />
             </div>
-            <div className="flex flex-col items-end w-1/2 right-0 gap-2.5 absolute mt-34.25">
+            <div className="flex flex-col items-end w-1/2 right-0 gap-2.5 absolute mt-23.75">
                 <BlackKey
                     index={index}
                     note="Gb"
@@ -191,7 +191,7 @@ const BlackKey = ({
 
     return (
         <div
-            className="h-7 w-full bg-black flex items-center justify-center cursor-pointer"
+            className="h-4 w-full bg-black flex items-center justify-center cursor-pointer"
             onClick={() => {
                 synth.triggerAttackRelease(thisNote, "8n");
                 setCurrentMidi(thisMidi);
@@ -243,7 +243,7 @@ const WhiteKey = ({
 
     return (
         <div
-            className="h-9 w-full bg-white/40 flex items-center justify-start cursor-pointer"
+            className="h-6 w-full bg-white/40 flex items-center justify-start cursor-pointer"
             onClick={() => {
                 synth.triggerAttackRelease(thisNote, "8n");
                 setCurrentMidi(thisMidi);
