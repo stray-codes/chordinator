@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import * as Tone from "tone";
 import { Note, NoteLiteral } from "tonal";
 import { Frequency } from "tone/build/esm/core/type/Units";
+import { useSettings } from "../../libs/settings";
 
 export const StringInstrumentMobile = ({
     tuning,
@@ -35,6 +36,7 @@ export const StringInstrumentMobile = ({
     chord: number[];
     maxNumberOfFrets: number | undefined;
 }) => {
+    const { settings } = useSettings();
     const fullNumberOfFrets = 40;
     const numberOfFrets = Number.isNaN(Number(maxNumberOfFrets))
         ? fullNumberOfFrets
@@ -46,7 +48,10 @@ export const StringInstrumentMobile = ({
                 style={{ minWidth: tuning.length * 18.75 + 20 + "px" }}
             >
                 <div className="flex flex-1 max-h-10 flex-row h-10 pl-4">
-                    {[...tuning].reverse().map((note) => {
+                    {(settings?.leftyMode === "true"
+                        ? [...tuning]
+                        : [...tuning].reverse()
+                    ).map((note) => {
                         const thisMidi = Note.midi(note as NoteLiteral) ?? 0;
                         const isCurrentNote = currentMidi === thisMidi;
                         const isCurrentNoteOctaved =
@@ -76,6 +81,10 @@ export const StringInstrumentMobile = ({
                                 <div
                                     className="text-center text-xs [writing-mode:vertical-rl]"
                                     style={{
+                                        rotate:
+                                            settings?.leftyMode === "true"
+                                                ? "180deg"
+                                                : "0deg",
                                         color:
                                             isChord || isChordOctaved
                                                 ? "#fdc700"
@@ -221,6 +230,7 @@ const String = ({
 };
 
 const Dots = ({ index }: { index: number }) => {
+    const { settings } = useSettings();
     return (
         <div
             className={
@@ -238,7 +248,13 @@ const Dots = ({ index }: { index: number }) => {
 
             {(index === 0 ||
                 (index !== 1 && ![0, 3, 5, 7, 9, 12].includes(index % 12))) && (
-                <span className="[writing-mode:vertical-rl] text-xs opacity-50 select-none">
+                <span
+                    className="[writing-mode:vertical-rl] text-xs opacity-50 select-none"
+                    style={{
+                        rotate:
+                            settings?.leftyMode === "true" ? "180deg" : "0deg",
+                    }}
+                >
                     {index}
                 </span>
             )}

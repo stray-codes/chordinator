@@ -22,14 +22,14 @@ import { Note } from "tonal";
 import { StringInstrument } from "./components/string-instrument";
 import { Piano } from "./components/piano";
 import useWindowDimensions from "./libs/screen-width";
-import { MadeBy } from "./components/made-by";
+import { More } from "./components/more";
 import { InstrumentSelect } from "./components/instrument-select";
 import { Toaster } from "sonner";
-import { useLocalStorage } from "./libs/local-storage";
+import { useSettings } from "./libs/settings";
 import { ChordScaleIntervalSelect } from "./components/chord-scale-interval-select";
 
 export const Desktop = () => {
-    const { settings } = useLocalStorage();
+    const { settings } = useSettings();
     const settingsLoaded = useRef(false);
 
     const [maxNumberOfFrets, setMaxNumberOfFrets] = useState<
@@ -131,7 +131,7 @@ export const Desktop = () => {
                             }
                         />
 
-                        {width > 1300 && <MadeBy />}
+                        {width > 1300 && <More />}
 
                         <InstrumentSelect
                             strings={tuningString}
@@ -143,7 +143,7 @@ export const Desktop = () => {
                             setMaxNumberOfFrets={setMaxNumberOfFrets}
                         />
                     </div>
-                    {width <= 1300 && <MadeBy />}
+                    {width <= 1300 && <More />}
                 </div>
             </div>
 

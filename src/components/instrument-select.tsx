@@ -30,7 +30,7 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { instruments } from "../../data/instruments";
-import { useLocalStorage } from "../libs/local-storage";
+import { useSettings } from "../libs/settings";
 
 export const InstrumentSelect = ({
     strings,
@@ -50,7 +50,7 @@ export const InstrumentSelect = ({
     setMaxNumberOfFrets: (value: number | undefined) => void;
 }) => {
     const [searchFilter, setSearchFilter] = useState("");
-    const { saveSetting } = useLocalStorage();
+    const { saveSetting } = useSettings();
 
     useEffect(() => saveSetting("stringGroup", stringGroup), [stringGroup]);
     useEffect(

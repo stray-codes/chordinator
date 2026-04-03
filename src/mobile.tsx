@@ -20,17 +20,30 @@ import { Lock } from "lucide-preact";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toggle } from "./components/ui/toggle";
 import * as Tone from "tone";
-import { MadeByMobile } from "./components/made-by";
+import { MoreMobile } from "./components/more";
 import { Button } from "./components/ui/button";
 import { useState, useMemo, useEffect, useRef } from "preact/hooks";
 import { InstrumentSelectMobile } from "./components/mobile/instrument-select";
 import { ChordScaleIntervalSelectMobile } from "./components/mobile/chord-scale-interval-select";
 import { Chord, Interval, Note } from "tonal";
 import { StringsPiano } from "./components/mobile/strings-piano";
-import { useLocalStorage } from "./libs/local-storage";
+import { useSettings } from "./libs/settings";
+import { useFullscreen } from "./libs/fullscreen";
 
 export const Mobile = () => {
-    const { settings } = useLocalStorage();
+    const { settings, saveSetting } = useSettings();
+    const { isFullscreen, requestFullscreen } = useFullscreen();
+    useEffect(() => {
+        const handler = () => {
+            console.log("handling");
+            if (!isFullscreen && settings?.fullscreen === "true") {
+                requestFullscreen();
+            }
+        };
+        document.addEventListener("click", handler);
+        return () => document.removeEventListener("click", handler);
+    }, []);
+
     const settingsLoaded = useRef(false);
 
     const [activeInstrument, setActiveInstrument] = useState<
@@ -101,12 +114,12 @@ export const Mobile = () => {
                 .map((value) => value.trim())
                 .reverse(),
         );
-        console.log(settings.tuning.split(",").reverse());
         setMaxNumberOfFrets(
             settings.maxNumberOfFrets.length > 0
                 ? Number(settings.maxNumberOfFrets)
                 : undefined,
         );
+        setActiveInstrument(settings.activeInstrument as "strings" | "piano");
 
         settingsLoaded.current = true;
     }, [settings]);
@@ -129,7 +142,7 @@ export const Mobile = () => {
 
                 <div className="size-full overflow-scroll *:size-full *:flex *:flex-col *:items-center *:justify-center">
                     <TabsContent value="more">
-                        <MadeByMobile />
+                        <MoreMobile />
                     </TabsContent>
                     <TabsContent value="instruments">
                         <InstrumentSelectMobile
@@ -170,11 +183,14 @@ export const Mobile = () => {
                         onClick={() => {
                             if (activeTab !== "strings-piano") {
                                 setActiveInstrument("strings");
+                                saveSetting("activeInstrument", "strings");
                             } else {
                                 if (activeInstrument === "strings") {
                                     setActiveInstrument("piano");
+                                    saveSetting("activeInstrument", "piano");
                                 } else {
                                     setActiveInstrument("strings");
+                                    saveSetting("activeInstrument", "strings");
                                 }
                             }
                             setActiveTab("strings-piano");
@@ -201,11 +217,14 @@ export const Mobile = () => {
                         onClick={() => {
                             if (activeTab !== "strings-piano") {
                                 setActiveInstrument("piano");
+                                saveSetting("activeInstrument", "piano");
                             } else {
                                 if (activeInstrument === "strings") {
                                     setActiveInstrument("piano");
+                                    saveSetting("activeInstrument", "piano");
                                 } else {
                                     setActiveInstrument("strings");
+                                    saveSetting("activeInstrument", "strings");
                                 }
                             }
                             setActiveTab("strings-piano");

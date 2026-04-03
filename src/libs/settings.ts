@@ -42,7 +42,7 @@ const defaultSettings: Settings = {
     activeInstrument: "strings",
 };
 
-export const useLocalStorage = () => {
+export const useSettings = () => {
     const [settings, setSettings] = useState<Settings>();
     useEffect(() => {
         const reloadedSettings = defaultSettings;

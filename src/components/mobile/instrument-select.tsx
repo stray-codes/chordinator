@@ -21,7 +21,7 @@ import { Note } from "tonal";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { instruments } from "../../../data/instruments";
-import { useLocalStorage } from "../../libs/local-storage";
+import { useSettings } from "../../libs/settings";
 
 export const InstrumentSelectMobile = ({
     tuning,
@@ -35,7 +35,7 @@ export const InstrumentSelectMobile = ({
     setMaxNumberOfFrets: (value: number | undefined) => void;
 }) => {
     const [strings, setStrings] = useState([...tuning].reverse().join(", "));
-    const { saveSetting } = useLocalStorage();
+    const { saveSetting } = useSettings();
 
     const [searchFilter, setSearchFilter] = useState("");
 

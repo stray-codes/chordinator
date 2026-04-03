@@ -18,9 +18,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useFullscreen } from "../libs/fullscreen";
 import useWindowDimensions from "../libs/screen-width";
-import { Button } from "./ui/button";
+import { useSettings } from "../libs/settings";
+import { Checkbox } from "./ui/checkbox";
+import { Label } from "./ui/label";
 
-export const MadeBy = () => {
+export const More = () => {
     const { width } = useWindowDimensions();
     return (
         <div
@@ -57,11 +59,12 @@ export const MadeBy = () => {
     );
 };
 
-export const MadeByMobile = () => {
-    const { toggleFullscreen } = useFullscreen();
+export const MoreMobile = () => {
+    const { setFullscreen } = useFullscreen();
+    const { settings, saveSetting } = useSettings();
 
     return (
-        <div className="flex flex-col size-full">
+        <div className="flex flex-col size-full items-center">
             <div className="flex flex-col justify-around items-center gap-2 size-full">
                 <div className="flex flex-col gap-2 items-center w-2/3 max-w-[20vh]">
                     <img src="chordinator.svg" className="w-full" />
@@ -97,10 +100,39 @@ export const MadeByMobile = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col w-full h-1/3 items-center justify-center">
-                <Button variant="outline" onClick={() => toggleFullscreen()}>
-                    Toggle fullscreen
-                </Button>
+            <div className="flex flex-col w-fit h-1/3 items-start justify-center gap-1">
+                <div className="flex gap-2">
+                    <Checkbox
+                        id="fullscreen"
+                        checked={settings?.fullscreen === "true"}
+                        onCheckedChange={(value) => {
+                            setFullscreen(!!value);
+                            saveSetting("fullscreen", String(value));
+                        }}
+                    />
+                    <Label htmlFor="fullscreen">Fullscreen</Label>
+                </div>
+                <div className="flex gap-2">
+                    <Checkbox
+                        id="splitMode"
+                        checked={settings?.splitMode === "true"}
+                        onCheckedChange={(value) => {
+                            saveSetting("splitMode", String(value));
+                        }}
+                    />
+                    <Label htmlFor="splitMode">Split Mode</Label>
+                </div>
+                <div className="flex gap-2">
+                    <Checkbox
+                        id="leftyMode"
+                        checked={settings?.leftyMode === "true"}
+                        onCheckedChange={(value) => {
+                            console.log(value);
+                            saveSetting("leftyMode", String(value));
+                        }}
+                    />
+                    <Label htmlFor="leftyMode">Lefty Mode</Label>
+                </div>
             </div>
         </div>
     );
