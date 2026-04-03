@@ -1,5 +1,5 @@
 /*
-Chordinator: A tool to visualize sequences, chords and intervals of string instruments.
+Chordinator: A tool to visualize chords, scales and intervals of string instruments.
 Copyright (C) 2026 Karol Czopek
 
 This program is free software: you can redistribute it and/or modify
@@ -16,8 +16,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useState } from "preact/hooks";
-import { Chord, interval, Interval, Note, NoteLiteral } from "tonal";
+import { StateUpdater, useEffect, useMemo, useState } from "preact/hooks";
+import { Chord, Interval, Note, NoteLiteral } from "tonal";
 import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
 import { Input } from "./ui/input";
 import { Toggle } from "./ui/toggle";
@@ -34,62 +34,65 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { chords } from "../../data/chords";
-import { sequences } from "../../data/sequences";
+import { scales } from "../../data/scales";
 
-export const ChordSequenceSelect = ({
-    setChord,
+export const ChordScaleIntervalSelect = ({
+    lock,
+    setLock,
+    setAbsoluteIntervals,
     setChordName,
     currentNote,
+    chordScaleIntervalGroup,
+    setChordScaleIntervalGroup,
+    relativeIntervalsString,
+    setRelativeIntervalsString,
 }: {
-    setChord: (value: number[]) => void;
+    lock: boolean;
+    setLock: (value: StateUpdater<boolean>) => void;
+    setAbsoluteIntervals: (value: number[]) => void;
     setChordName: (value: string) => void;
     currentNote: NoteLiteral;
+    chordScaleIntervalGroup: string;
+    setChordScaleIntervalGroup: (value: string) => void;
+    relativeIntervalsString: string;
+    setRelativeIntervalsString: (value: string) => void;
 }) => {
-    const [lockChords, setLockChords] = useState(false);
-    const [chordGroup, setChordGroup] = useState("none");
-    const [chordInput, setChordInput] = useState("");
-    const [interVals, setIntervals] = useState<number[]>([]);
+    const relativeIntervals = useMemo(
+        () =>
+            relativeIntervalsString
+                .split(",")
+                .filter((value) => value.length > 0)
+                .map((value) => Number(value)),
+        [relativeIntervalsString],
+    );
     const [search, setSearch] = useState("");
 
     const [lockInfoNotified, setLockInfoNotified] = useState(false);
 
     useEffect(() => {
-        setLockChords(false);
-    }, [chordInput]);
-
-    const updateIntervals = (newChordInput?: string) => {
-        if (lockChords) return;
+        if (lock) return;
         setChordName("-");
-        const tmp = (newChordInput ?? chordInput)
-            .split(/,\s*/)
-            .map((item) => {
-                if (item === null) return null;
-                if (item.length === 0) return null;
-                const semitone = Number(item);
-                if (!isNaN(semitone)) return Interval.fromSemitones(semitone);
-                const intervalName = Interval.name(item);
-                if (intervalName.length === 0) return null;
-                return intervalName;
-            })
-            .filter((item) => !!item) as string[];
-        setIntervals(tmp.map((item) => Interval.semitones(item)));
-        const newChord = [
-            ...tmp.map((item) => Note.transpose(currentNote, item)),
-        ];
-        setChord(newChord.map((item) => Note.midi(item)!));
-        const newChordNames = Chord.detect(newChord);
+        const newAbsoluteNotes =
+            relativeIntervals?.map((value) =>
+                Note.transpose(currentNote, Interval.fromSemitones(value)),
+            ) ?? [];
+
+        const newAbsoluteIntervals = newAbsoluteNotes.map(
+            (item) => Note.midi(item)!,
+        );
+        setAbsoluteIntervals(newAbsoluteIntervals);
+        const newChordNames = Chord.detect(newAbsoluteNotes);
         if (newChordNames.length >= 1) {
             setChordName(newChordNames.join(", "));
             if (!lockInfoNotified) {
                 setLockInfoNotified(true);
                 toast.message("Hit space to lock!", {
                     description:
-                        "If you press space, the currently selected interval, chord or sequence will be locked in place. Press again to release lock.",
+                        "If you press space, the currently selected interval, chord or scale will be locked in place. Press again to release lock.",
                 });
             }
         }
-    };
-    useEffect(updateIntervals, [chordInput, currentNote]);
+    }, [relativeIntervals, currentNote]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -98,7 +101,7 @@ export const ChordSequenceSelect = ({
                 if (target.tagName === "INPUT" || target.tagName === "TEXTAREA")
                     return;
                 e.preventDefault();
-                setLockChords((prev) => {
+                setLock((prev) => {
                     return !prev;
                 });
             }
@@ -113,9 +116,9 @@ export const ChordSequenceSelect = ({
             <div className="flex items-center justify-between w-full text-xs">
                 <Toggle
                     className="h-6 p-0 hover:text-yellow-300 rounded-full"
-                    pressed={lockChords}
-                    onPressedChange={(value) => setLockChords(value)}
-                    disabled={chordGroup === "none"}
+                    pressed={lock}
+                    onPressedChange={(value) => setLock(value)}
+                    disabled={chordScaleIntervalGroup === "none"}
                 >
                     <Lock className="size-3" />
                 </Toggle>
@@ -127,7 +130,7 @@ export const ChordSequenceSelect = ({
 
                         <DialogContent className="h-9/10 flex flex-col items-start">
                             <DialogTitle className="sr-only">
-                                Dialog containing lists of chords, sequences and
+                                Dialog containing lists of chords, scales and
                                 intervals.
                             </DialogTitle>
                             <Tabs
@@ -138,8 +141,8 @@ export const ChordSequenceSelect = ({
                                     <TabsTrigger value="chords">
                                         Chords
                                     </TabsTrigger>
-                                    <TabsTrigger value="sequences">
-                                        Sequences
+                                    <TabsTrigger value="scales">
+                                        Scales
                                     </TabsTrigger>
                                     <TabsTrigger value="intervals">
                                         Intervals
@@ -179,16 +182,16 @@ export const ChordSequenceSelect = ({
                                                         variant="outline"
                                                         style={{
                                                             color:
-                                                                chordInput ===
+                                                                relativeIntervalsString ===
                                                                 chord.intervals
                                                                     ? "#fdc700"
                                                                     : undefined,
                                                         }}
                                                         onClick={() => {
-                                                            setChordInput(
+                                                            setRelativeIntervalsString(
                                                                 chord.intervals,
                                                             );
-                                                            setChordGroup(
+                                                            setChordScaleIntervalGroup(
                                                                 chord.chordGroup ??
                                                                     "custom",
                                                             );
@@ -207,7 +210,7 @@ export const ChordSequenceSelect = ({
                                 </TabsContent>
 
                                 <TabsContent
-                                    value="sequences"
+                                    value="scales"
                                     className="size-full h-full overflow-hidden flex flex-col gap-2"
                                 >
                                     <Input
@@ -218,7 +221,7 @@ export const ChordSequenceSelect = ({
                                         }
                                     />
                                     <div className="flex flex-col h-full w-full overflow-scroll">
-                                        {sequences
+                                        {scales
                                             .filter((item) =>
                                                 item.label
                                                     .toLocaleLowerCase()
@@ -233,33 +236,33 @@ export const ChordSequenceSelect = ({
                                                     ),
                                             )
 
-                                            .map((sequence) => (
+                                            .map((scale) => (
                                                 <DialogClose asChild>
                                                     <Button
                                                         className="flex justify-between w-full gap-4"
                                                         variant="outline"
                                                         style={{
                                                             color:
-                                                                chordInput ===
-                                                                sequence.intervals
+                                                                relativeIntervalsString ===
+                                                                scale.intervals
                                                                     ? "#fdc700"
                                                                     : undefined,
                                                         }}
                                                         onClick={() => {
-                                                            setChordInput(
-                                                                sequence.intervals,
+                                                            setRelativeIntervalsString(
+                                                                scale.intervals,
                                                             );
-                                                            setChordGroup(
-                                                                sequence.chordGroup ??
+                                                            setChordScaleIntervalGroup(
+                                                                scale.chordGroup ??
                                                                     "custom",
                                                             );
                                                         }}
                                                     >
                                                         <span>
-                                                            {sequence.label}
+                                                            {scale.label}
                                                         </span>
                                                         <span>
-                                                            {sequence.intervals}
+                                                            {scale.intervals}
                                                         </span>
                                                     </Button>
                                                 </DialogClose>
@@ -274,23 +277,21 @@ export const ChordSequenceSelect = ({
                                     <ToggleGroup
                                         type="multiple"
                                         className="flex flex-col w-full h-full overflow-scroll *:hover:bg-transparent *:data-[state=on]:bg-transparent *:w-full *:data-[state=on]:text-yellow-300  *:hover:text-cyan-300"
-                                        value={interVals.map((item) =>
+                                        value={relativeIntervals.map((item) =>
                                             String(item),
                                         )}
                                         onValueChange={(value) => {
-                                            setChordGroup("custom");
+                                            setChordScaleIntervalGroup(
+                                                "custom",
+                                            );
                                             const newChordInput = value
                                                 .sort(
                                                     (a, b) =>
                                                         Number(a) - Number(b),
                                                 )
                                                 .join(", ");
-                                            setChordInput(newChordInput);
-                                            updateIntervals(newChordInput);
-                                            setIntervals(
-                                                value.map((item) =>
-                                                    Number(item),
-                                                ),
+                                            setRelativeIntervalsString(
+                                                newChordInput,
                                             );
                                         }}
                                     >
@@ -334,13 +335,14 @@ export const ChordSequenceSelect = ({
                                             Octave
                                         </ToggleGroupItem>
                                     </ToggleGroup>
-                                    {chordInput.length > 0 ? (
+                                    {relativeIntervalsString.length > 0 ? (
                                         <Button
                                             variant="outline"
                                             onClick={() => {
-                                                setChordInput("");
-                                                setChordGroup("custom");
-                                                setIntervals([]);
+                                                setRelativeIntervalsString("");
+                                                setChordScaleIntervalGroup(
+                                                    "custom",
+                                                );
                                             }}
                                         >
                                             None
@@ -349,14 +351,12 @@ export const ChordSequenceSelect = ({
                                         <Button
                                             variant="outline"
                                             onClick={() => {
-                                                setChordInput(
+                                                setRelativeIntervalsString(
                                                     "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12",
                                                 );
-                                                setChordGroup("custom");
-                                                setIntervals([
-                                                    0, 1, 2, 3, 4, 5, 6, 7, 8,
-                                                    9, 10, 11, 12,
-                                                ]);
+                                                setChordScaleIntervalGroup(
+                                                    "custom",
+                                                );
                                             }}
                                         >
                                             All
@@ -370,22 +370,22 @@ export const ChordSequenceSelect = ({
             </div>
             <ToggleGroup
                 type="single"
-                value={chordGroup}
+                value={chordScaleIntervalGroup}
                 onValueChange={(value) => {
                     if (value) {
-                        setChordGroup(value);
+                        setChordScaleIntervalGroup(value);
                         switch (value) {
                             case "none":
-                                setChordInput("");
+                                setRelativeIntervalsString("");
                                 break;
                             case "major":
-                                setChordInput("0, 4, 7");
+                                setRelativeIntervalsString("0, 4, 7");
                                 break;
                             case "minor":
-                                setChordInput("0, 3, 7");
+                                setRelativeIntervalsString("0, 3, 7");
                                 break;
                             case "pentatonic":
-                                setChordInput("0, 2, 4, 7, 9");
+                                setRelativeIntervalsString("0, 2, 4, 7, 9");
                                 break;
                         }
                     }
@@ -418,10 +418,10 @@ export const ChordSequenceSelect = ({
                 </ToggleGroupItem>
             </ToggleGroup>
             <Input
-                value={chordInput}
+                value={relativeIntervalsString}
                 onChange={(e) => {
-                    setChordGroup("custom");
-                    setChordInput(e.currentTarget.value);
+                    setChordScaleIntervalGroup("custom");
+                    setRelativeIntervalsString(e.currentTarget.value);
                 }}
             />
         </div>

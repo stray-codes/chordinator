@@ -1,4 +1,4 @@
-export const sequences: Sequence[] = [
+export const scales: Scale[] = [
     {
         label: "Pentatonic Major",
         intervals: "0, 2, 4, 7, 9",
@@ -64,14 +64,14 @@ export const sequences: Sequence[] = [
     { label: "Prometheus", intervals: "0, 2, 4, 6, 9, 10" },
 ];
 
-export type Sequence = {
+export type Scale = {
     label: string;
     intervals: string;
     chordGroup?: "pentatonic" | "custom";
 };
 
 /*
-Chordinator: A tool to visualize sequences, chords and intervals of string instruments.
+Chordinator: A tool to visualize chords, scales and intervals of string instruments.
 Copyright (C) 2026 Karol Czopek
 
 This program is free software: you can redistribute it and/or modify

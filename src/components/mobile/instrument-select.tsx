@@ -1,5 +1,5 @@
 /*
-Chordinator: A tool to visualize sequences, chords and intervals of string instruments.
+Chordinator: A tool to visualize chords, scales and intervals of string instruments.
 Copyright (C) 2026 Karol Czopek
 
 This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ import { Note } from "tonal";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { instruments } from "../../../data/instruments";
+import { useLocalStorage } from "../../libs/local-storage";
 
 export const InstrumentSelectMobile = ({
     tuning,
@@ -34,8 +35,14 @@ export const InstrumentSelectMobile = ({
     setMaxNumberOfFrets: (value: number | undefined) => void;
 }) => {
     const [strings, setStrings] = useState([...tuning].reverse().join(", "));
+    const { saveSetting } = useLocalStorage();
 
     const [searchFilter, setSearchFilter] = useState("");
+
+    useEffect(
+        () => saveSetting("maxNumberOfFrets", String(maxNumberOfFrets)),
+        [maxNumberOfFrets],
+    );
 
     useEffect(() => {
         let tmp = strings.split(/,\s*/);
@@ -51,6 +58,8 @@ export const InstrumentSelectMobile = ({
         for (const item of tmp) {
             if (item.length === 0) return;
         }
+
+        saveSetting("tuning", tmp.join(", "));
         setTuning(tmp.reverse());
     }, [strings]);
 

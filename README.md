@@ -8,13 +8,13 @@
 <div align="center">
   <img height="128" width="128" src="./public/chordinator.svg">
   <h1><a href="https://chords.stray.codes">Chordinator</a></h1>
-  <h4>A tool to visualize sequences, chords and intervals of string instruments.</h4>
+  <h4>A tool to visualize chords, scales and intervals of string instruments.</h4>
 </div>
 
 
 ## How to use?
 Select your instrument on the bottom right of the screen, there are more instruments accessible through the + icon.
-Then select whatever chord/sequence/interval you wan't to visualize on the bottom left of the screen.
+Then select whatever chord/scale/interval you wan't to visualize on the bottom left of the screen.
 After that just hover over any note on the keyboard or string instrument. Once you are happy with your selection just hit space
 to lock your selection. Enjoy!
 
@@ -27,7 +27,7 @@ I am sharing it for free as I already used a lot of free resources to study the 
  - Does this website have cookies or collect user data?
 > No and it never will.
 
- -  Can you add string instrument/chord/sequence?
+ -  Can you add string instrument/chord/scale?
 > Of course, just either create a PR or raise an issue. Check out the [`data`](https://github.com/stray-codes/chordinator/tree/main/data) folder for more info.
 
  -  Can you add a new feature?

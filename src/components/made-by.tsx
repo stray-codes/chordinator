@@ -1,5 +1,5 @@
 /*
-Chordinator: A tool to visualize sequences, chords and intervals of string instruments.
+Chordinator: A tool to visualize chords, scales and intervals of string instruments.
 Copyright (C) 2026 Karol Czopek
 
 This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useEffect } from "preact/hooks";
 import { useFullscreen } from "../libs/fullscreen";
 import useWindowDimensions from "../libs/screen-width";
 import { Button } from "./ui/button";

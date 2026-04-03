@@ -1,5 +1,5 @@
-# Chords / Sequences / Instruments
-This folder has all the chords, sequences and instruments you can find on the website.
+# Chords / Scales / Instruments
+This folder has all the chords, scales and instruments you can find on the website.
 To add more, create a PR or raise an issue.
 
 ## Chords
@@ -12,8 +12,8 @@ For example if this chord is selected and the user hovers over D4, then D4 (0), 
 All other D, F, A and C notes in different octaves will be marked with a slightly muted and transparent yellow.
 Before you raise an issue or PR, type the intervals in the input field of the website to test if it works as expected.
 
-## Sequences
-Sequences work identically as Chords. Example:
+## Scales
+Scales work identically as Chords. Example:
 ```ts
 { label: "Pentatonic Major", intervals: "0, 2, 4, 7, 9" },
 ```

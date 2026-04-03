@@ -1,5 +1,5 @@
 /*
-Chordinator: A tool to visualize sequences, chords and intervals of string instruments.
+Chordinator: A tool to visualize chords, scales and intervals of string instruments.
 Copyright (C) 2026 Karol Czopek
 
 This program is free software: you can redistribute it and/or modify
@@ -30,20 +30,33 @@ import {
 } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { instruments } from "../../data/instruments";
+import { useLocalStorage } from "../libs/local-storage";
 
 export const InstrumentSelect = ({
+    strings,
+    setStrings,
+    stringGroup,
+    setStringGroup,
     setTuning,
     maxNumberOfFrets,
     setMaxNumberOfFrets,
 }: {
+    strings: string;
+    setStrings: (value: string) => void;
+    stringGroup: string;
+    setStringGroup: (value: string) => void;
     setTuning: (value: string[]) => void;
     maxNumberOfFrets: number | undefined;
     setMaxNumberOfFrets: (value: number | undefined) => void;
 }) => {
-    const [stringGroup, setStringGroup] = useState("bass");
-    const [strings, setStrings] = useState("E1, A1, D2, G2");
-
     const [searchFilter, setSearchFilter] = useState("");
+    const { saveSetting } = useLocalStorage();
+
+    useEffect(() => saveSetting("stringGroup", stringGroup), [stringGroup]);
+    useEffect(
+        () => saveSetting("maxNumberOfFrets", String(maxNumberOfFrets)),
+        [maxNumberOfFrets],
+    );
 
     useEffect(() => {
         let tmp = strings.split(/,\s*/);
@@ -59,6 +72,8 @@ export const InstrumentSelect = ({
         for (const item of tmp) {
             if (item.length === 0) return;
         }
+
+        saveSetting("tuning", tmp.join(", "));
         setTuning(tmp.reverse());
     }, [strings]);
 

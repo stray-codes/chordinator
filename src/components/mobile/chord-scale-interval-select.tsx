@@ -1,5 +1,5 @@
 /*
-Chordinator: A tool to visualize sequences, chords and intervals of string instruments.
+Chordinator: A tool to visualize chords, scales and intervals of string instruments.
 Copyright (C) 2026 Karol Czopek
 
 This program is free software: you can redistribute it and/or modify
@@ -23,18 +23,18 @@ import { Input } from "../ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Button } from "../ui/button";
 import { chords } from "../../../data/chords";
-import { sequences } from "../../../data/sequences";
+import { scales } from "../../../data/scales";
 
-export const ChordSequenceSelectMobile = ({
-    chordInput,
-    setChordInput,
-    intervals,
-    setIntervals,
+export const ChordScaleIntervalSelectMobile = ({
+    relativeIntervalsString,
+    setRelativeIntervalsString,
+    relativeIntervals,
+    setRelativeIntervals,
 }: {
-    chordInput: string;
-    setChordInput: (value: string) => void;
-    intervals: number[];
-    setIntervals: (value: number[]) => void;
+    relativeIntervalsString: string;
+    setRelativeIntervalsString: (value: string) => void;
+    relativeIntervals: number[];
+    setRelativeIntervals: (value: number[]) => void;
 }) => {
     const [search, setSearch] = useState("");
 
@@ -44,15 +44,15 @@ export const ChordSequenceSelectMobile = ({
             className="size-full flex flex-col gap-0 overflow-x-hidden"
         >
             <Input
-                value={chordInput}
+                value={relativeIntervalsString}
                 className="text-yellow-300"
                 onChange={(e) => {
-                    setChordInput(e.currentTarget.value);
+                    setRelativeIntervalsString(e.currentTarget.value);
                 }}
             />
             <TabsList className="w-full m-0 p-0 border-0 *:text-xs">
                 <TabsTrigger value="chords">Chords</TabsTrigger>
-                <TabsTrigger value="sequences">Sequences</TabsTrigger>
+                <TabsTrigger value="scales">Scales</TabsTrigger>
                 <TabsTrigger value="intervals">Intervals</TabsTrigger>
             </TabsList>
 
@@ -82,11 +82,14 @@ export const ChordSequenceSelectMobile = ({
                                     className="flex justify-between w-full gap-4 text-xs"
                                     variant="outline"
                                     onClick={() => {
-                                        setChordInput(chord.intervals);
+                                        setRelativeIntervalsString(
+                                            chord.intervals,
+                                        );
                                     }}
                                     style={{
                                         color:
-                                            chordInput === chord.intervals
+                                            relativeIntervalsString ===
+                                            chord.intervals
                                                 ? "#fdc700"
                                                 : undefined,
                                     }}
@@ -100,10 +103,7 @@ export const ChordSequenceSelectMobile = ({
                     </div>
                 </TabsContent>
 
-                <TabsContent
-                    value="sequences"
-                    className="size-full flex flex-col"
-                >
+                <TabsContent value="scales" className="size-full flex flex-col">
                     <Input
                         className="text-xs"
                         placeholder="Search..."
@@ -111,7 +111,7 @@ export const ChordSequenceSelectMobile = ({
                         onChange={(e) => setSearch(e.currentTarget.value)}
                     />
                     <div className="flex flex-col size-full overflow-scroll">
-                        {sequences
+                        {scales
                             .filter((item) =>
                                 item.label
                                     .toLocaleLowerCase()
@@ -123,23 +123,26 @@ export const ChordSequenceSelectMobile = ({
                                     ),
                             )
 
-                            .map((sequence) => (
+                            .map((scale) => (
                                 <Button
                                     className="flex justify-between w-full gap-4 text-xs"
                                     variant="outline"
                                     style={{
                                         color:
-                                            chordInput === sequence.intervals
+                                            relativeIntervalsString ===
+                                            scale.intervals
                                                 ? "#fdc700"
                                                 : undefined,
                                     }}
                                     onClick={() => {
-                                        setChordInput(sequence.intervals);
+                                        setRelativeIntervalsString(
+                                            scale.intervals,
+                                        );
                                     }}
                                 >
-                                    <span>{sequence.label}</span>
+                                    <span>{scale.label}</span>
                                     <span className="truncate">
-                                        {sequence.intervals}
+                                        {scale.intervals}
                                     </span>
                                 </Button>
                             ))}
@@ -153,14 +156,16 @@ export const ChordSequenceSelectMobile = ({
                     <ToggleGroup
                         type="multiple"
                         className="flex flex-col w-full h-full overflow-scroll *:hover:bg-transparent *:data-[state=on]:bg-transparent *:w-full *:data-[state=on]:text-yellow-300  *:text-xs *:border-t"
-                        value={intervals.map((item) => String(item))}
+                        value={relativeIntervals.map((item) => String(item))}
                         onValueChange={(value) => {
                             const newChordInput = value
                                 .sort((a, b) => Number(a) - Number(b))
                                 .join(", ");
-                            setChordInput(newChordInput);
+                            setRelativeIntervalsString(newChordInput);
                             // updateIntervals(newChordInput); TODO
-                            setIntervals(value.map((item) => Number(item)));
+                            setRelativeIntervals(
+                                value.map((item) => Number(item)),
+                            );
                         }}
                     >
                         <ToggleGroupItem value="0">Unison</ToggleGroupItem>
@@ -191,12 +196,12 @@ export const ChordSequenceSelectMobile = ({
                         </ToggleGroupItem>
                         <ToggleGroupItem value="12">Octave</ToggleGroupItem>
                     </ToggleGroup>
-                    {chordInput.length > 0 ? (
+                    {relativeIntervalsString.length > 0 ? (
                         <Button
                             variant="outline"
                             onClick={() => {
-                                setChordInput("");
-                                setIntervals([]);
+                                setRelativeIntervalsString("");
+                                setRelativeIntervals([]);
                             }}
                         >
                             None
@@ -205,10 +210,10 @@ export const ChordSequenceSelectMobile = ({
                         <Button
                             variant="outline"
                             onClick={() => {
-                                setChordInput(
+                                setRelativeIntervalsString(
                                     "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12",
                                 );
-                                setIntervals([
+                                setRelativeIntervals([
                                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
                                 ]);
                             }}
