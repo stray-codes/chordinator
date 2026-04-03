@@ -16,20 +16,10 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useCallback, useEffect, useState } from "preact/hooks";
+import { useCallback, useState } from "preact/hooks";
 
 export const useFullscreen = () => {
     const [isFullscreen, setIsFullscreen] = useState(false);
-
-    const toggleFullscreen = useCallback(async () => {
-        if (!document.fullscreenElement) {
-            await document.documentElement.requestFullscreen();
-            setIsFullscreen(true);
-        } else {
-            await document.exitFullscreen();
-            setIsFullscreen(false);
-        }
-    }, []);
 
     const setFullscreen = useCallback(async (value: boolean) => {
         if (value) {
@@ -41,16 +31,5 @@ export const useFullscreen = () => {
         }
     }, []);
 
-    useEffect(() => {
-        const handler = () => setIsFullscreen(!!document.fullscreenElement);
-        document.addEventListener("fullscreenchange", handler);
-        return () => document.removeEventListener("fullscreenchange", handler);
-    }, []);
-
-    const requestFullscreen = async () => {
-        await document.documentElement.requestFullscreen();
-        setIsFullscreen(true);
-    };
-
-    return { isFullscreen, toggleFullscreen, requestFullscreen, setFullscreen };
+    return { isFullscreen, setFullscreen };
 };

@@ -32,17 +32,17 @@ import { useFullscreen } from "./libs/fullscreen";
 
 export const Mobile = () => {
     const { settings, saveSetting } = useSettings();
-    const { isFullscreen, requestFullscreen } = useFullscreen();
+    const { isFullscreen, setFullscreen } = useFullscreen();
     useEffect(() => {
+        if (settings?.fullscreen !== "true") return;
         const handler = () => {
-            console.log("handling");
-            if (!isFullscreen && settings?.fullscreen === "true") {
-                requestFullscreen();
+            if (!document.fullscreenElement) {
+                setFullscreen(true);
             }
         };
         document.addEventListener("click", handler);
         return () => document.removeEventListener("click", handler);
-    }, []);
+    }, [isFullscreen, settings]);
 
     const settingsLoaded = useRef(false);
 
