@@ -1,5 +1,5 @@
 /*
-Chordinator: A tool to visualize sequences, chords and intervals of string instruments.
+Chordinator: A tool to visualize chords, scales and intervals of string instruments.
 Copyright (C) 2026 Karol Czopek
 
 This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ import { StringInstrumentMobile } from "./string-instrument";
 import * as Tone from "tone";
 import { PianoMobile } from "./piano";
 import { useMemo } from "preact/hooks";
+import { useSettings } from "../../libs/settings";
 
 export const StringsPiano = ({
     tuning,
@@ -41,17 +42,30 @@ export const StringsPiano = ({
     chordName: string;
     activeInstrument: "strings" | "piano";
 }) => {
-    const screenSpace = useMemo(
-        () => (activeInstrument === "strings" ? 80 : 50),
-        [activeInstrument],
-    );
+    const { settings } = useSettings();
+    const screenSpace = useMemo(() => {
+        if (settings?.splitMode === "true")
+            return activeInstrument === "strings" ? 80 : 50;
+        else return activeInstrument === "strings" ? 100 : 0;
+    }, [activeInstrument, settings]);
     return (
         <div className="size-full h-full flex flex-col max-h-full grow-0 overflow-hidden">
-            <div className="flex-1 min-h-0 flex">
+            <div
+                className="flex-1 min-h-0 flex"
+                style={{
+                    flexDirection:
+                        settings?.leftyMode === "true" ? "row-reverse" : "row",
+                }}
+            >
                 <div
                     className="h-full"
                     style={{
                         width: `${screenSpace}%`,
+                        display:
+                            settings?.splitMode === "false" &&
+                            activeInstrument !== "strings"
+                                ? "none"
+                                : undefined,
                     }}
                 >
                     <StringInstrumentMobile
@@ -66,7 +80,14 @@ export const StringsPiano = ({
                 <div
                     className="h-full"
                     style={{
+                        rotate:
+                            settings?.leftyMode === "true" ? "180deg" : "0deg",
                         width: `${100 - screenSpace}%`,
+                        display:
+                            settings?.splitMode === "false" &&
+                            activeInstrument !== "piano"
+                                ? "none"
+                                : undefined,
                     }}
                 >
                     <PianoMobile

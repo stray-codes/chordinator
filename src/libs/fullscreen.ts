@@ -1,5 +1,5 @@
 /*
-Chordinator: A tool to visualize sequences, chords and intervals of string instruments.
+Chordinator: A tool to visualize chords, scales and intervals of string instruments.
 Copyright (C) 2026 Karol Czopek
 
 This program is free software: you can redistribute it and/or modify
@@ -31,6 +31,16 @@ export const useFullscreen = () => {
         }
     }, []);
 
+    const setFullscreen = useCallback(async (value: boolean) => {
+        if (value) {
+            await document.documentElement.requestFullscreen();
+            setIsFullscreen(true);
+        } else {
+            await document.exitFullscreen();
+            setIsFullscreen(false);
+        }
+    }, []);
+
     useEffect(() => {
         const handler = () => setIsFullscreen(!!document.fullscreenElement);
         document.addEventListener("fullscreenchange", handler);
@@ -42,5 +52,5 @@ export const useFullscreen = () => {
         setIsFullscreen(true);
     };
 
-    return { isFullscreen, toggleFullscreen, requestFullscreen };
+    return { isFullscreen, toggleFullscreen, requestFullscreen, setFullscreen };
 };
