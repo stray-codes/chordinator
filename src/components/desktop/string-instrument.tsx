@@ -18,9 +18,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import * as Tone from "tone";
 import { Note, NoteLiteral } from "tonal";
-import useWindowDimensions from "../libs/screen-width";
+import useWindowDimensions from "../../libs/screen-width";
 import { Frequency } from "tone/build/esm/core/type/Units";
-import { getNoteColor } from "../libs/utils";
+import { getNoteColor } from "../../libs/utils";
 
 export const StringInstrument = ({
     tuning,

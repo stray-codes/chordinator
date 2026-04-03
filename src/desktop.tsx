@@ -19,14 +19,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import * as Tone from "tone";
 import { Note } from "tonal";
-import { StringInstrument } from "./components/string-instrument";
-import { Piano } from "./components/piano";
+import { StringInstrument } from "./components/desktop/string-instrument";
+import { Piano } from "./components/desktop/piano";
 import useWindowDimensions from "./libs/screen-width";
 import { More } from "./components/more";
-import { InstrumentSelect } from "./components/instrument-select";
+import { InstrumentSelect } from "./components/desktop/instrument-select";
 import { Toaster } from "sonner";
 import { useSettings } from "./libs/settings";
-import { ChordScaleIntervalSelect } from "./components/chord-scale-interval-select";
+import { ChordScaleIntervalSelect } from "./components/desktop/chord-scale-interval-select";
 
 export const Desktop = () => {
     const { settings } = useSettings();

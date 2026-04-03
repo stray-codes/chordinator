@@ -18,8 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import * as Tone from "tone";
 import { Note } from "tonal";
-import useWindowDimensions from "../libs/screen-width";
-import { getNoteColor } from "../libs/utils";
+import useWindowDimensions from "../../libs/screen-width";
+import { getNoteColor } from "../../libs/utils";
 
 export const Piano = ({
     synth,

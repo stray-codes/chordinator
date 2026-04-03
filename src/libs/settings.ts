@@ -45,15 +45,15 @@ const defaultSettings: Settings = {
 export const useSettings = () => {
     const [settings, setSettings] = useState<Settings>();
     useEffect(() => {
-        const reloadedSettings = defaultSettings;
+        const reloadedSettings = { ...defaultSettings };
         Object.keys(defaultSettings).forEach((key) => {
             const k = key as keyof Settings;
             const storedValue = localStorage.getItem(k);
             if (storedValue) {
                 reloadedSettings[k] = storedValue;
             }
-            setSettings(reloadedSettings);
         });
+        setSettings(reloadedSettings);
     }, []);
 
     const saveSetting = (key: keyof Settings, value: string) => {

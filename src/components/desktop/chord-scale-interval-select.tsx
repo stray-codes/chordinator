@@ -18,9 +18,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { StateUpdater, useEffect, useMemo, useState } from "preact/hooks";
 import { Chord, Interval, Note, NoteLiteral } from "tonal";
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
-import { Input } from "./ui/input";
-import { Toggle } from "./ui/toggle";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { Input } from "../ui/input";
+import { Toggle } from "../ui/toggle";
 import { Lock, PlusCircle } from "lucide-preact";
 
 import {
@@ -29,12 +29,12 @@ import {
     DialogContent,
     DialogTitle,
     DialogTrigger,
-} from "./ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { Button } from "./ui/button";
+} from "../ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Button } from "../ui/button";
 import { toast } from "sonner";
-import { chords } from "../../data/chords";
-import { scales } from "../../data/scales";
+import { chords } from "../../../data/chords";
+import { scales } from "../../../data/scales";
 
 export const ChordScaleIntervalSelect = ({
     lock,

@@ -18,8 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useEffect, useState } from "preact/hooks";
 import { Note } from "tonal";
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
-import { Input } from "./ui/input";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { Input } from "../ui/input";
 import { PlusCircle } from "lucide-preact";
 import {
     Dialog,
@@ -27,10 +27,10 @@ import {
     DialogContent,
     DialogTitle,
     DialogTrigger,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { instruments } from "../../data/instruments";
-import { useSettings } from "../libs/settings";
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { instruments } from "../../../data/instruments";
+import { useSettings } from "../../libs/settings";
 
 export const InstrumentSelect = ({
     strings,

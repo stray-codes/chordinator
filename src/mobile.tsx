@@ -177,7 +177,15 @@ export const Mobile = () => {
                     </TabsContent>
                 </div>
 
-                <div className="flex h-7 w-full shrink-0">
+                <div
+                    className="flex h-7 w-full shrink-0"
+                    style={{
+                        flexDirection:
+                            settings.leftyMode === "true"
+                                ? "row-reverse"
+                                : "row",
+                    }}
+                >
                     <Button
                         variant="secondary"
                         className="h-full grow border-0"
