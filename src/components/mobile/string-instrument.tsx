@@ -20,24 +20,27 @@ import * as Tone from "tone";
 import { Note, NoteLiteral } from "tonal";
 import { Frequency } from "tone/build/esm/core/type/Units";
 import { useSettings } from "../../libs/settings";
+import { getNoteColor } from "../../libs/utils";
 
 export const StringInstrumentMobile = ({
     tuning,
     synth,
     currentMidi,
     setCurrentMidi,
-    chord,
+    absoluteInterval,
     maxNumberOfFrets,
+    lock,
 }: {
     tuning: string[];
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
     maxNumberOfFrets: number | undefined;
+    lock: boolean;
 }) => {
     const { settings } = useSettings();
-    const fullNumberOfFrets = 40;
+    const fullNumberOfFrets = 45;
     const numberOfFrets = Number.isNaN(Number(maxNumberOfFrets))
         ? fullNumberOfFrets
         : Math.min(maxNumberOfFrets!, fullNumberOfFrets);
@@ -53,16 +56,12 @@ export const StringInstrumentMobile = ({
                         : [...tuning].reverse()
                     ).map((note) => {
                         const thisMidi = Note.midi(note as NoteLiteral) ?? 0;
-                        const isCurrentNote = currentMidi === thisMidi;
-                        const isCurrentNoteOctaved =
-                            thisMidi % 12 === currentMidi % 12 &&
-                            !isCurrentNote;
-
-                        const isChord = chord.includes(thisMidi);
-                        const isChordOctaved =
-                            chord
-                                .map((note) => note % 12)
-                                .includes(thisMidi % 12) && !isChord;
+                        const noteColor = getNoteColor(
+                            thisMidi,
+                            lock,
+                            currentMidi,
+                            absoluteInterval,
+                        );
 
                         return (
                             <div
@@ -85,18 +84,10 @@ export const StringInstrumentMobile = ({
                                             settings?.leftyMode === "true"
                                                 ? "180deg"
                                                 : "0deg",
-                                        color:
-                                            isChord || isChordOctaved
-                                                ? "#fdc700"
-                                                : isCurrentNote ||
-                                                    isCurrentNoteOctaved
-                                                  ? "#00d3f2"
-                                                  : undefined,
+                                        color: noteColor.background,
                                         opacity:
-                                            isChordOctaved ||
-                                            isCurrentNoteOctaved
-                                                ? 0.6
-                                                : undefined,
+                                            noteColor.background &&
+                                            noteColor.opacity,
                                     }}
                                 >
                                     {note}
@@ -115,7 +106,8 @@ export const StringInstrumentMobile = ({
                                     currentMidi={currentMidi}
                                     setCurrentMidi={setCurrentMidi}
                                     synth={synth}
-                                    chord={chord}
+                                    absoluteInterval={absoluteInterval}
+                                    lock={lock}
                                 />
                             );
                         },
@@ -127,7 +119,8 @@ export const StringInstrumentMobile = ({
                             currentMidi={currentMidi}
                             setCurrentMidi={setCurrentMidi}
                             synth={synth}
-                            chord={chord}
+                            absoluteInterval={absoluteInterval}
+                            lock={lock}
                         />
                     )}
                 </div>
@@ -142,14 +135,16 @@ const Fret = ({
     currentMidi,
     setCurrentMidi,
     synth,
-    chord,
+    absoluteInterval,
+    lock,
 }: {
     index: number;
     tuning: string[];
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
+    lock: boolean;
 }) => {
     return (
         <div className="flex grow min-h-10">
@@ -163,7 +158,8 @@ const Fret = ({
                         currentMidi={currentMidi}
                         setCurrentMidi={setCurrentMidi}
                         synth={synth}
-                        chord={chord}
+                        absoluteInterval={absoluteInterval}
+                        lock={lock}
                     />
                 ))}
             </div>
@@ -176,18 +172,23 @@ const String = ({
     currentMidi,
     setCurrentMidi,
     synth,
-    chord,
+    absoluteInterval,
+    lock,
 }: {
     thisMidi: number;
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
+    lock: boolean;
 }) => {
-    const isChord = chord.includes(thisMidi);
-    const isChordOctaved = chord
-        .map((item) => item % 12)
-        .includes(thisMidi % 12);
+    const noteColor = getNoteColor(
+        thisMidi,
+        lock,
+        currentMidi,
+        absoluteInterval,
+    );
+
     return (
         <div
             className="relative w-full min-w-3 h-full flex items-center justify-center cursor-pointer"
@@ -199,31 +200,7 @@ const String = ({
                 setCurrentMidi(thisMidi);
             }}
         >
-            {!isChordOctaved && (
-                <div
-                    className="rounded-full size-2 bg-cyan-400/40 absolute"
-                    style={{
-                        visibility:
-                            Note.pitchClass(Note.fromMidi(currentMidi)) ===
-                            Note.pitchClass(Note.fromMidi(thisMidi))
-                                ? "visible"
-                                : "hidden",
-                    }}
-                />
-            )}
-            <div
-                className="rounded-full size-2 bg-cyan-400 absolute"
-                style={{
-                    visibility: currentMidi === thisMidi ? "visible" : "hidden",
-                }}
-            />
-            {isChord && (
-                <div className="size-2 rounded-full bg-yellow-400 absolute" />
-            )}
-            {isChordOctaved && (
-                <div className="size-2 rounded-full bg-yellow-400/50 absolute" />
-            )}
-
+            <div className="rounded-full size-2 absolute" style={noteColor} />
             <div className="h-full w-0.5 bg-white" />
         </div>
     );

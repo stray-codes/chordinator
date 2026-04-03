@@ -29,4 +29,4 @@ export function App() {
     else return <Desktop />;
 }
 
-render(<App />, document.getElementById("app"));
+render(<App />, document.getElementById("app")!);

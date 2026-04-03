@@ -168,10 +168,11 @@ export const Mobile = () => {
                             synth={synth}
                             currentMidi={currentMidi}
                             setCurrentMidi={setCurrentMidi}
-                            chord={absoluteIntervals}
+                            absoluteInterval={absoluteIntervals}
                             maxNumberOfFrets={maxNumberOfFrets}
                             chordName={chordName}
                             activeInstrument={activeInstrument}
+                            lock={lock}
                         />
                     </TabsContent>
                 </div>

@@ -28,19 +28,21 @@ export const StringsPiano = ({
     synth,
     currentMidi,
     setCurrentMidi,
-    chord,
+    absoluteInterval ,
     maxNumberOfFrets,
     chordName,
     activeInstrument,
+    lock
 }: {
     tuning: string[];
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
     maxNumberOfFrets: number | undefined;
     chordName: string;
     activeInstrument: "strings" | "piano";
+    lock: boolean
 }) => {
     const { settings } = useSettings();
     const screenSpace = useMemo(() => {
@@ -73,8 +75,9 @@ export const StringsPiano = ({
                         synth={synth}
                         currentMidi={currentMidi}
                         setCurrentMidi={setCurrentMidi}
-                        chord={chord}
+                        absoluteInterval={absoluteInterval}
                         maxNumberOfFrets={maxNumberOfFrets}
+                        lock={lock}
                     />
                 </div>
                 <div
@@ -94,7 +97,8 @@ export const StringsPiano = ({
                         synth={synth}
                         currentMidi={currentMidi}
                         setCurrentMidi={setCurrentMidi}
-                        chord={chord}
+                        absoluteInterval={absoluteInterval}
+                        lock={lock}
                     />
                 </div>
             </div>

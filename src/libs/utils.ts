@@ -22,3 +22,36 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
+
+export const getNoteColor = (
+    thisMidi: number,
+    lock: boolean,
+    currentMidi: number,
+    absoluteInterval: number[],
+) => {
+    if (lock) {
+        if (thisMidi === currentMidi)
+            return { opacity: "100%", background: "#00d3f2" };
+        else if (thisMidi % 12 === currentMidi % 12)
+            return { opacity: "60%", background: "#00d3f2" };
+        else if (absoluteInterval.includes(thisMidi))
+            return { opacity: "100%", background: "#fdc700" };
+        else if (
+            absoluteInterval.map((value) => value % 12).includes(thisMidi % 12)
+        )
+            return { opacity: "60%", background: "#fdc700" };
+        else return { opacity: "0%", background: undefined };
+    } else {
+        if (absoluteInterval.includes(thisMidi))
+            return { opacity: "100%", background: "#fdc700" };
+        else if (
+            absoluteInterval.map((value) => value % 12).includes(thisMidi % 12)
+        )
+            return { opacity: "60%", background: "#fdc700" };
+        else if (thisMidi === currentMidi)
+            return { opacity: "100%", background: "#00d3f2" };
+        else if (thisMidi % 12 === currentMidi % 12)
+            return { opacity: "60%", background: "#00d3f2" };
+        else return { opacity: "0%", background: undefined };
+    }
+};

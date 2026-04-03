@@ -19,150 +19,64 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import * as Tone from "tone";
 import { Note } from "tonal";
 import useWindowDimensions from "../libs/screen-width";
+import { getNoteColor } from "../libs/utils";
 
 export const Piano = ({
     synth,
     currentMidi,
     setCurrentMidi,
-    chord,
+    absoluteInterval,
+    lock,
 }: {
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
+    lock: boolean;
 }) => {
     const { width } = useWindowDimensions();
     return (
         <div className="flex gap-0.5">
-            {Array.from({ length: width / 220 }, (_, i) => i).map((index) => (
-                <Octave
-                    index={index}
-                    synth={synth}
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    chord={chord}
-                />
-            ))}
+            {Array.from({ length: Math.min(width / 220, 10) }, (_, i) => i).map(
+                (index) => (
+                    <Octave
+                        index={index}
+                        synth={synth}
+                        currentMidi={currentMidi}
+                        setCurrentMidi={setCurrentMidi}
+                        absoluteInterval={absoluteInterval}
+                        lock={lock}
+                    />
+                ),
+            )}
         </div>
     );
 };
 
-const Octave = ({
-    index,
-    currentMidi,
-    setCurrentMidi,
-    synth,
-    chord,
-}: {
+const Octave = (props: {
     index: number;
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
+    lock: boolean;
 }) => {
     return (
         <div className="flex relative">
             <div className="flex gap-0.5">
-                <WhiteKey
-                    index={index}
-                    note="C"
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
-                <WhiteKey
-                    index={index}
-                    note={"D"}
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
-                <WhiteKey
-                    index={index}
-                    note={"E"}
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
-                <WhiteKey
-                    index={index}
-                    note={"F"}
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
-                <WhiteKey
-                    index={index}
-                    note={"G"}
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
-                <WhiteKey
-                    index={index}
-                    note={"A"}
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
-                <WhiteKey
-                    index={index}
-                    note={"B"}
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
+                {["C", "D", "E", "F", "G", "A", "B"].map((note) => (
+                    <WhiteKey {...props} note={note} />
+                ))}
             </div>
             <div className="flex gap-1.5 absolute ml-2.75">
-                <BlackKey
-                    index={index}
-                    note="Db"
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
-                <BlackKey
-                    index={index}
-                    note="Eb"
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
+                {["Db", "Eb"].map((note) => (
+                    <BlackKey {...props} note={note} />
+                ))}
             </div>
             <div className="flex gap-1.5 absolute ml-16.25">
-                <BlackKey
-                    index={index}
-                    note="Gb"
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
-                <BlackKey
-                    index={index}
-                    note="Ab"
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
-                <BlackKey
-                    index={index}
-                    note="Bb"
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    synth={synth}
-                    chord={chord}
-                />
+                {["Gb", "Ab", "Bb"].map((note) => (
+                    <BlackKey {...props} note={note} />
+                ))}
             </div>
         </div>
     );
@@ -174,22 +88,26 @@ const BlackKey = ({
     currentMidi,
     setCurrentMidi,
     synth,
-    chord,
+    absoluteInterval,
+    lock,
 }: {
     index: number;
     note: string;
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
+    lock: boolean;
 }) => {
     const thisMidi = (Note.midi(note + "0") ?? 0) + 12 * index;
     const thisNote = Note.fromMidi(thisMidi);
 
-    const isChord = chord.includes(thisMidi);
-    const isChordOctaved = chord
-        .map((item) => item % 12)
-        .includes(thisMidi % 12);
+    const noteColor = getNoteColor(
+        thisMidi,
+        lock,
+        currentMidi,
+        absoluteInterval,
+    );
 
     return (
         <div
@@ -202,20 +120,7 @@ const BlackKey = ({
                 setCurrentMidi(thisMidi);
             }}
         >
-            {!isChordOctaved && currentMidi === thisMidi && (
-                <div className="size-2 rounded-full bg-cyan-400 absolute" />
-            )}
-            {!isChordOctaved &&
-                Note.pitchClass(Note.fromMidi(currentMidi)) ===
-                    Note.pitchClass(Note.fromMidi(thisMidi)) && (
-                    <div className="size-2 rounded-full bg-cyan-400/40 absolute" />
-                )}
-            {isChord && (
-                <div className="size-2 rounded-full bg-yellow-400 absolute" />
-            )}
-            {isChordOctaved && (
-                <div className="size-2 rounded-full bg-yellow-400/30 absolute" />
-            )}
+            <div className="size-2 rounded-full absolute" style={noteColor} />
         </div>
     );
 };
@@ -226,22 +131,26 @@ const WhiteKey = ({
     currentMidi,
     setCurrentMidi,
     synth,
-    chord,
+    absoluteInterval,
+    lock,
 }: {
     index: number;
     note: string;
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
+    lock: boolean;
 }) => {
     const thisMidi = (Note.midi(note + "0") ?? 0) + 12 * index;
     const thisNote = Note.fromMidi(thisMidi);
 
-    const isChord = chord.includes(thisMidi);
-    const isChordOctaved = chord
-        .map((item) => item % 12)
-        .includes(thisMidi % 12);
+    const noteColor = getNoteColor(
+        thisMidi,
+        lock,
+        currentMidi,
+        absoluteInterval,
+    );
 
     return (
         <div
@@ -254,21 +163,7 @@ const WhiteKey = ({
                 setCurrentMidi(thisMidi);
             }}
         >
-            {!isChordOctaved && currentMidi === thisMidi && (
-                <div className="size-2 rounded-full bg-cyan-400 absolute" />
-            )}
-
-            {!isChordOctaved &&
-                Note.pitchClass(Note.fromMidi(currentMidi)) ===
-                    Note.pitchClass(Note.fromMidi(thisMidi)) && (
-                    <div className="size-2 rounded-full bg-cyan-400/40 absolute" />
-                )}
-            {isChord && (
-                <div className="size-2 rounded-full bg-yellow-400 absolute" />
-            )}
-            {isChordOctaved && (
-                <div className="size-2 rounded-full bg-yellow-400/30 absolute" />
-            )}
+            <div className="size-2 rounded-full absolute" style={noteColor} />
         </div>
     );
 };

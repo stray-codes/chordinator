@@ -20,28 +20,29 @@ import * as Tone from "tone";
 import { Note, NoteLiteral } from "tonal";
 import useWindowDimensions from "../libs/screen-width";
 import { Frequency } from "tone/build/esm/core/type/Units";
+import { getNoteColor } from "../libs/utils";
 
 export const StringInstrument = ({
     tuning,
     synth,
     currentMidi,
     setCurrentMidi,
-    chord,
+    absoluteInterval,
     maxNumberOfFrets,
+    lock,
 }: {
     tuning: string[];
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
     maxNumberOfFrets: number | undefined;
+    lock: boolean;
 }) => {
     const { width } = useWindowDimensions();
-    const numberOfFretsScreenWidth = width / 80;
+    const numberOfFretsScreenWidth = Math.min(width / 80, 45);
     const numberOfFrets = Number.isInteger(maxNumberOfFrets)
-        ? numberOfFretsScreenWidth < maxNumberOfFrets!
-            ? numberOfFretsScreenWidth
-            : maxNumberOfFrets!
+        ? Math.min(numberOfFretsScreenWidth, maxNumberOfFrets!)
         : numberOfFretsScreenWidth;
     return (
         <div className="flex-col w-full">
@@ -49,16 +50,12 @@ export const StringInstrument = ({
                 <div className="flex flex-col w-14 shrink-0">
                     {tuning.map((note) => {
                         const thisMidi = Note.midi(note as NoteLiteral) ?? 0;
-                        const isCurrentNote = currentMidi === thisMidi;
-                        const isCurrentNoteOctaved =
-                            thisMidi % 12 === currentMidi % 12 &&
-                            !isCurrentNote;
-
-                        const isChord = chord.includes(thisMidi);
-                        const isChordOctaved =
-                            chord
-                                .map((note) => note % 12)
-                                .includes(thisMidi % 12) && !isChord;
+                        const noteColor = getNoteColor(
+                            thisMidi,
+                            lock,
+                            currentMidi,
+                            absoluteInterval,
+                        );
 
                         return (
                             <div
@@ -76,18 +73,10 @@ export const StringInstrument = ({
                             >
                                 <span
                                     style={{
-                                        color:
-                                            isChord || isChordOctaved
-                                                ? "#fdc700"
-                                                : isCurrentNote ||
-                                                    isCurrentNoteOctaved
-                                                  ? "#00d3f2"
-                                                  : undefined,
+                                        color: noteColor.background,
                                         opacity:
-                                            isChordOctaved ||
-                                            isCurrentNoteOctaved
-                                                ? 0.6
-                                                : undefined,
+                                            noteColor.background &&
+                                            noteColor.opacity,
                                     }}
                                 >
                                     {note}
@@ -105,7 +94,8 @@ export const StringInstrument = ({
                                 currentMidi={currentMidi}
                                 setCurrentMidi={setCurrentMidi}
                                 synth={synth}
-                                chord={chord}
+                                absoluteInterval={absoluteInterval}
+                                lock={lock}
                             />
                         );
                     },
@@ -117,7 +107,8 @@ export const StringInstrument = ({
                         currentMidi={currentMidi}
                         setCurrentMidi={setCurrentMidi}
                         synth={synth}
-                        chord={chord}
+                        absoluteInterval={absoluteInterval}
+                        lock={lock}
                     />
                 )}
             </div>
@@ -141,14 +132,16 @@ const Fret = ({
     currentMidi,
     setCurrentMidi,
     synth,
-    chord,
+    absoluteInterval,
+    lock,
 }: {
     index: number;
     tuning: string[];
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
+    lock: boolean;
 }) => {
     return (
         <div className="flex flex-col w-full border-l border-white ">
@@ -158,7 +151,8 @@ const Fret = ({
                     currentMidi={currentMidi}
                     setCurrentMidi={setCurrentMidi}
                     synth={synth}
-                    chord={chord}
+                    absoluteInterval={absoluteInterval}
+                    lock={lock}
                 />
             ))}
         </div>
@@ -170,18 +164,22 @@ const String = ({
     currentMidi,
     setCurrentMidi,
     synth,
-    chord,
+    absoluteInterval,
+    lock,
 }: {
     thisMidi: number;
     currentMidi: number;
     setCurrentMidi: (value: number) => void;
     synth: Tone.Synth<Tone.SynthOptions>;
-    chord: number[];
+    absoluteInterval: number[];
+    lock: boolean;
 }) => {
-    const isChord = chord.includes(thisMidi);
-    const isChordOctaved = chord
-        .map((item) => item % 12)
-        .includes(thisMidi % 12);
+    const noteColor = getNoteColor(
+        thisMidi,
+        lock,
+        currentMidi,
+        absoluteInterval,
+    );
     return (
         <div
             className="relative w-full h-5 flex items-center justify-center cursor-pointer"
@@ -193,31 +191,7 @@ const String = ({
                 setCurrentMidi(thisMidi);
             }}
         >
-            {!isChordOctaved && (
-                <div
-                    className="rounded-full size-2 bg-cyan-400/40 absolute"
-                    style={{
-                        visibility:
-                            Note.pitchClass(Note.fromMidi(currentMidi)) ===
-                            Note.pitchClass(Note.fromMidi(thisMidi))
-                                ? "visible"
-                                : "hidden",
-                    }}
-                />
-            )}
-            <div
-                className="rounded-full size-2 bg-cyan-400 absolute"
-                style={{
-                    visibility: currentMidi === thisMidi ? "visible" : "hidden",
-                }}
-            />
-            {isChord && (
-                <div className="size-2 rounded-full bg-yellow-400 absolute" />
-            )}
-            {isChordOctaved && (
-                <div className="size-2 rounded-full bg-yellow-400/50 absolute" />
-            )}
-
+            <div className="rounded-full size-2 absolute" style={noteColor} />
             <div className="w-full h-0.5 bg-white" />
         </div>
     );

@@ -91,7 +91,8 @@ export const Desktop = () => {
                     synth={synth}
                     currentMidi={currentMidi}
                     setCurrentMidi={setCurrentMidi}
-                    chord={absoluteIntervals}
+                    absoluteInterval={absoluteIntervals}
+                    lock={lock}
                 />
 
                 <div className="flex flex-col items-center justify-center gap-1">
@@ -110,8 +111,9 @@ export const Desktop = () => {
                     currentMidi={currentMidi}
                     setCurrentMidi={setCurrentMidi}
                     synth={synth}
-                    chord={absoluteIntervals}
+                    absoluteInterval={absoluteIntervals}
                     maxNumberOfFrets={maxNumberOfFrets}
+                    lock={lock}
                 />
                 <div className="flex flex-col gap-4 pb-4 w-full">
                     <div className="flex flex-row justify-between items-end gap-2 w-full flex-wrap">
