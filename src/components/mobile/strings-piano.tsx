@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { Note } from "tonal";
 import { StringInstrumentMobile } from "./string-instrument";
 import * as Tone from "tone";
+import { PianoMobile } from "./piano";
 
 export const StringsPiano = ({
     tuning,
@@ -37,20 +38,43 @@ export const StringsPiano = ({
     maxNumberOfFrets: number | undefined;
     chordName: string;
 }) => {
+    const screenSpace = 60;
     return (
         <div className="size-full h-full flex flex-col max-h-full grow-0 overflow-hidden">
-            <div className="flex-1 min-h-0">
-                <StringInstrumentMobile
-                    tuning={tuning}
-                    synth={synth}
-                    currentMidi={currentMidi}
-                    setCurrentMidi={setCurrentMidi}
-                    chord={chord}
-                    maxNumberOfFrets={maxNumberOfFrets}
-                />
+            <div className="flex-1 min-h-0 flex">
+                <div
+                    className="h-full"
+                    style={{
+                        width: `${screenSpace}%`,
+                    }}
+                >
+                    <StringInstrumentMobile
+                        tuning={tuning}
+                        synth={synth}
+                        currentMidi={currentMidi}
+                        setCurrentMidi={setCurrentMidi}
+                        chord={chord}
+                        maxNumberOfFrets={maxNumberOfFrets}
+                    />
+                </div>
+                <div
+                    className="h-full"
+                    style={{
+                        width: `${100 - screenSpace}%`,
+                    }}
+                >
+                    <PianoMobile
+                        synth={synth}
+                        currentMidi={currentMidi}
+                        setCurrentMidi={setCurrentMidi}
+                        chord={chord}
+                    />
+                </div>
             </div>
             <div className="h-fit flex justify-between w-full px-2 py-1 border-t gap-4">
-                <span className="text-cyan-300">{Note.fromMidi(currentMidi)}</span>
+                <span className="text-cyan-300">
+                    {Note.fromMidi(currentMidi)}
+                </span>
                 <span className="text-yellow-300 truncate">{chordName}</span>
             </div>
         </div>
