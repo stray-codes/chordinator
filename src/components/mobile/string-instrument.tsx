@@ -191,7 +191,7 @@ const String = ({
 
     return (
         <div
-            className="relative w-full min-w-3 h-full flex items-center justify-center cursor-pointer"
+            className="relative w-full min-w-3 h-full flex items-center justify-center cursor-pointer select-none"
             onMouseEnter={() => {
                 setCurrentMidi(thisMidi);
             }}
@@ -200,8 +200,11 @@ const String = ({
                 setCurrentMidi(thisMidi);
             }}
         >
-            <div className="rounded-full size-2 absolute" style={noteColor} />
-            <div className="h-full w-0.5 bg-white" />
+            <div
+                className="rounded-full size-2 absolute select-none"
+                style={noteColor}
+            />
+            <div className="h-full w-0.5 bg-white select-none" />
         </div>
     );
 };
@@ -211,16 +214,16 @@ const Dots = ({ index }: { index: number }) => {
     return (
         <div
             className={
-                "flex flex-col justify-center items-center gap-0.5 w-4 shrink-0"
+                "flex flex-col justify-center items-center gap-0.5 w-4 shrink-0 select-none"
             }
         >
             {(index === 1 ||
                 (index !== 0 && [0, 3, 5, 7, 9, 12].includes(index % 12))) && (
-                <div className="bg-white size-0.5 rounded-full" />
+                <div className="bg-white size-0.5 rounded-full select-none" />
             )}
 
             {index !== 0 && index % 12 === 0 && (
-                <div className="bg-white size-0.5 rounded-full" />
+                <div className="bg-white size-0.5 rounded-full select-none" />
             )}
 
             {(index === 0 ||

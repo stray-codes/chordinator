@@ -106,7 +106,7 @@ const BlackKey = ({
 
     return (
         <div
-            className="h-4 w-full bg-black flex items-center justify-center cursor-pointer"
+            className="h-4 w-full bg-black flex items-center justify-center cursor-pointer select-none"
             onClick={() => {
                 synth.triggerAttackRelease(thisNote, "8n");
                 setCurrentMidi(thisMidi);
@@ -116,7 +116,7 @@ const BlackKey = ({
             }}
         >
             <div
-                className="size-2 rounded-full bg-cyan-400 absolute"
+                className="size-2 rounded-full bg-cyan-400 absolute select-none"
                 style={noteColor}
             />
         </div>
@@ -151,7 +151,7 @@ const WhiteKey = ({
 
     return (
         <div
-            className="h-6 w-full bg-white/40 flex items-center justify-start cursor-pointer"
+            className="h-6 w-full bg-white/40 flex items-center justify-start cursor-pointer select-none"
             onClick={() => {
                 synth.triggerAttackRelease(thisNote, "8n");
                 setCurrentMidi(thisMidi);
@@ -160,10 +160,10 @@ const WhiteKey = ({
                 setCurrentMidi(thisMidi);
             }}
         >
-            <div className="h-full w-1/2 flex items-center justify-center *:select-none">
+            <div className="h-full w-1/2 flex items-center justify-center select-none">
                 {thisMidi % 12 === 0 ? (
                     <div
-                        className="[writing-mode:vertical-rl] absolute"
+                        className="[writing-mode:vertical-rl] absolute select-none"
                         style={{
                             color: noteColor.background,
                             opacity: noteColor.background && noteColor.opacity,
@@ -173,7 +173,7 @@ const WhiteKey = ({
                     </div>
                 ) : (
                     <div
-                        className="size-2 rounded-full absolute"
+                        className="size-2 rounded-full absolute select-none"
                         style={noteColor}
                     />
                 )}
