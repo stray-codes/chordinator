@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { useFullscreen } from "../libs/fullscreen";
 import useWindowDimensions from "../libs/screen-width";
-import { useSettings } from "../libs/settings";
+import { Settings } from "../libs/settings";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 
@@ -59,9 +59,14 @@ export const More = () => {
     );
 };
 
-export const MoreMobile = () => {
+export const MoreMobile = ({
+    settings,
+    saveSetting,
+}: {
+    settings: Settings;
+    saveSetting: (key: keyof Settings, value: string) => void;
+}) => {
     const { setFullscreen } = useFullscreen();
-    const { settings, saveSetting } = useSettings();
 
     return (
         <div className="flex flex-col size-full items-center">

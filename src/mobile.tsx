@@ -142,7 +142,10 @@ export const Mobile = () => {
 
                 <div className="size-full overflow-scroll *:size-full *:flex *:flex-col *:items-center *:justify-center">
                     <TabsContent value="more">
-                        <MoreMobile />
+                        <MoreMobile
+                            settings={settings}
+                            saveSetting={saveSetting}
+                        />
                     </TabsContent>
                     <TabsContent value="instruments">
                         <InstrumentSelectMobile

@@ -29,7 +29,7 @@ type SettingKey =
     | "leftyMode"
     | "activeInstrument";
 
-type Settings = Record<SettingKey, string>;
+export type Settings = Record<SettingKey, string>;
 
 const defaultSettings: Settings = {
     tuning: "E1, A1, D2, G2",
