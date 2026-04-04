@@ -185,8 +185,8 @@ export const Mobile = () => {
                     style={{
                         flexDirection:
                             settings.leftyMode === "true"
-                                ? "row-reverse"
-                                : "row",
+                                ? "row"
+                                : "row-reverse",
                     }}
                 >
                     <Button

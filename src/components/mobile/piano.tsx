@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import * as Tone from "tone";
 import { Note } from "tonal";
 import { getNoteColor } from "../../libs/utils";
+import { useEffect, useRef } from "preact/hooks";
 
 export const PianoMobile = ({
     synth,
@@ -33,8 +34,13 @@ export const PianoMobile = ({
     absoluteInterval: number[];
     lock: boolean;
 }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    useEffect(() => ref.current?.scroll(0, 500), []); // scrolls on load to around C2
     return (
-        <div className="flex flex-col w-full h-full gap-0.5 overflow-x-scroll no-scrollbar">
+        <div
+            className="flex flex-col w-full h-full gap-0.5 overflow-x-scroll no-scrollbar"
+            ref={ref}
+        >
             {Array.from({ length: 10 }, (_, i) => i).map((index) => (
                 <Octave
                     index={index}
@@ -163,7 +169,7 @@ const WhiteKey = ({
             <div className="h-full w-1/2 flex items-center justify-center select-none">
                 {thisMidi % 12 === 0 ? (
                     <div
-                        className="[writing-mode:vertical-rl] absolute select-none"
+                        className="[writing-mode:vertical-rl] absolute select-none text-xs"
                         style={{
                             color: noteColor.background,
                             opacity: noteColor.background && noteColor.opacity,

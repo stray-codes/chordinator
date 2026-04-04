@@ -28,11 +28,11 @@ export const StringsPiano = ({
     synth,
     currentMidi,
     setCurrentMidi,
-    absoluteInterval ,
+    absoluteInterval,
     maxNumberOfFrets,
     chordName,
     activeInstrument,
-    lock
+    lock,
 }: {
     tuning: string[];
     currentMidi: number;
@@ -42,7 +42,7 @@ export const StringsPiano = ({
     maxNumberOfFrets: number | undefined;
     chordName: string;
     activeInstrument: "strings" | "piano";
-    lock: boolean
+    lock: boolean;
 }) => {
     const { settings } = useSettings();
     const screenSpace = useMemo(() => {
@@ -56,11 +56,11 @@ export const StringsPiano = ({
                 className="flex-1 min-h-0 flex"
                 style={{
                     flexDirection:
-                        settings?.leftyMode === "true" ? "row-reverse" : "row",
+                        settings?.leftyMode === "true" ? "row" : "row-reverse",
                 }}
             >
                 <div
-                    className="h-full"
+                    className="h-full border-x"
                     style={{
                         width: `${screenSpace}%`,
                         display:
@@ -81,7 +81,7 @@ export const StringsPiano = ({
                     />
                 </div>
                 <div
-                    className="h-full"
+                    className="h-full border-x"
                     style={{
                         rotate:
                             settings?.leftyMode === "true" ? "180deg" : "0deg",
