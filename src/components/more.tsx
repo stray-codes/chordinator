@@ -16,13 +16,22 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { Settings as SettingsIcon } from "lucide-react";
 import { useFullscreen } from "../libs/fullscreen";
 import useWindowDimensions from "../libs/screen-width";
 import { Settings } from "../libs/settings";
+import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Label } from "./ui/label";
 
-export const More = () => {
+export const More = ({
+    settings,
+    saveSetting,
+}: {
+    settings: Settings;
+    saveSetting: (key: keyof Settings, value: string) => void;
+}) => {
     const { width } = useWindowDimensions();
     return (
         <div
@@ -55,6 +64,41 @@ export const More = () => {
                     Homepage
                 </a>
             </div>
+            <Dialog>
+                <DialogTrigger asChild>
+                    <Button
+                        variant="outline"
+                        className="hover:text-yellow-300 text-xs hover:bg-none h-6"
+                    >
+                        <SettingsIcon stroke-width={0.7} /> Settings
+                    </Button>
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogTitle>Settings</DialogTitle>
+                    <div className="flex gap-2">
+                        <Checkbox
+                            id="leftyMode"
+                            checked={settings?.leftyMode === "true"}
+                            onCheckedChange={(value) => {
+                                console.log(value);
+                                saveSetting("leftyMode", String(value));
+                            }}
+                        />
+                        <Label htmlFor="leftyMode">Lefty Mode</Label>
+                    </div>
+                    <div className="flex gap-2">
+                        <Checkbox
+                            id="semitones"
+                            checked={settings?.semitones === "true"}
+                            onCheckedChange={(value) => {
+                                console.log(value);
+                                saveSetting("semitones", String(value));
+                            }}
+                        />
+                        <Label htmlFor="semitones">Use Semitones</Label>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
@@ -137,6 +181,17 @@ export const MoreMobile = ({
                         }}
                     />
                     <Label htmlFor="leftyMode">Lefty Mode</Label>
+                </div>
+                <div className="flex gap-2">
+                    <Checkbox
+                        id="semitones"
+                        checked={settings?.semitones === "true"}
+                        onCheckedChange={(value) => {
+                            console.log(value);
+                            saveSetting("semitones", String(value));
+                        }}
+                    />
+                    <Label htmlFor="semitones">Use Semitones</Label>
                 </div>
             </div>
         </div>

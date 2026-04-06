@@ -21,6 +21,7 @@ import { Note, NoteLiteral } from "tonal";
 import useWindowDimensions from "../../libs/screen-width";
 import { Frequency } from "tone/build/esm/core/type/Units";
 import { getNoteColor } from "../../libs/utils";
+import { Settings } from "../../libs/settings";
 
 export const StringInstrument = ({
     tuning,
@@ -30,6 +31,7 @@ export const StringInstrument = ({
     absoluteInterval,
     maxNumberOfFrets,
     lock,
+    settings,
 }: {
     tuning: string[];
     currentMidi: number;
@@ -38,6 +40,7 @@ export const StringInstrument = ({
     absoluteInterval: number[];
     maxNumberOfFrets: number | undefined;
     lock: boolean;
+    settings: Settings;
 }) => {
     const { width } = useWindowDimensions();
     const numberOfFretsScreenWidth = Math.min(width / 80, 45);
@@ -46,7 +49,13 @@ export const StringInstrument = ({
         : numberOfFretsScreenWidth;
     return (
         <div className="flex-col w-full">
-            <div className="flex flex-row w-full">
+            <div
+                className="flex flex-row w-full"
+                style={{
+                    flexDirection:
+                        settings.leftyMode === "true" ? "row-reverse" : "row",
+                }}
+            >
                 <div className="flex flex-col w-14 shrink-0">
                     {tuning.map((note) => {
                         const thisMidi = Note.midi(note as NoteLiteral) ?? 0;
@@ -96,6 +105,7 @@ export const StringInstrument = ({
                                 synth={synth}
                                 absoluteInterval={absoluteInterval}
                                 lock={lock}
+                                settings={settings}
                             />
                         );
                     },
@@ -109,12 +119,21 @@ export const StringInstrument = ({
                         synth={synth}
                         absoluteInterval={absoluteInterval}
                         lock={lock}
+                        settings={settings}
                     />
                 )}
             </div>
 
             {numberOfFrets > 3 && (
-                <div className="flex w-full">
+                <div
+                    className="flex w-full"
+                    style={{
+                        flexDirection:
+                            settings.leftyMode === "true"
+                                ? "row-reverse"
+                                : "row",
+                    }}
+                >
                     {Array.from({ length: numberOfFrets + 1 }, (_, i) => i).map(
                         (index) => (
                             <Dots index={index} />
@@ -134,6 +153,7 @@ const Fret = ({
     synth,
     absoluteInterval,
     lock,
+    settings,
 }: {
     index: number;
     tuning: string[];
@@ -142,9 +162,23 @@ const Fret = ({
     synth: Tone.Synth<Tone.SynthOptions>;
     absoluteInterval: number[];
     lock: boolean;
+    settings: Settings;
 }) => {
     return (
-        <div className="flex flex-col w-full border-l border-white ">
+        <div
+            className="flex flex-col w-full border-l border-white "
+            style={
+                settings.leftyMode === "true"
+                    ? {
+                          borderRightStyle: "var(--tw-border-style)",
+                          borderRightWidth: "1px",
+                      }
+                    : {
+                          borderLeftStyle: "var(--tw-border-style)",
+                          borderLeftWidth: "1px",
+                      }
+            }
+        >
             {tuning.map((note) => (
                 <String
                     thisMidi={(Note.midi(note as NoteLiteral) ?? 0) + index + 1}

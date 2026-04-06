@@ -24,15 +24,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Button } from "../ui/button";
 import { chords } from "../../../data/chords";
 import { scales } from "../../../data/scales";
+import { Settings } from "../../libs/settings";
+import { Interval } from "tonal";
+import { compareIntervals, sortInterval } from "../../libs/utils";
 
 export const ChordScaleIntervalSelectMobile = ({
-    relativeIntervalsString,
-    setRelativeIntervalsString,
+    settings,
     relativeIntervals,
     setRelativeIntervals,
 }: {
-    relativeIntervalsString: string;
-    setRelativeIntervalsString: (value: string) => void;
+    settings: Settings;
     relativeIntervals: number[];
     setRelativeIntervals: (value: number[]) => void;
 }) => {
@@ -43,13 +44,6 @@ export const ChordScaleIntervalSelectMobile = ({
             defaultValue="intervals"
             className="size-full flex flex-col gap-0 overflow-x-hidden"
         >
-            <Input
-                value={relativeIntervalsString}
-                className="text-yellow-300"
-                onChange={(e) => {
-                    setRelativeIntervalsString(e.currentTarget.value);
-                }}
-            />
             <TabsList className="w-full m-0 p-0 border-0 *:text-xs">
                 <TabsTrigger value="chords">Chords</TabsTrigger>
                 <TabsTrigger value="scales">Scales</TabsTrigger>
@@ -82,21 +76,28 @@ export const ChordScaleIntervalSelectMobile = ({
                                     className="flex justify-between w-full gap-4 text-xs"
                                     variant="outline"
                                     onClick={() => {
-                                        setRelativeIntervalsString(
-                                            chord.intervals,
-                                        );
+                                        setRelativeIntervals(chord.intervals);
                                     }}
                                     style={{
-                                        color:
-                                            relativeIntervalsString ===
-                                            chord.intervals
-                                                ? "#fdc700"
-                                                : undefined,
+                                        color: compareIntervals(
+                                            chord.intervals,
+                                            relativeIntervals,
+                                        )
+                                            ? "#fdc700"
+                                            : undefined,
                                     }}
                                 >
                                     <span>{chord.label}</span>
                                     <span className="truncate">
-                                        {chord.intervals}
+                                        {chord.intervals
+                                            .map((value) =>
+                                                settings?.semitones === "true"
+                                                    ? value
+                                                    : Interval.fromSemitones(
+                                                          value,
+                                                      ),
+                                            )
+                                            .join(", ")}
                                     </span>
                                 </Button>
                             ))}
@@ -128,21 +129,28 @@ export const ChordScaleIntervalSelectMobile = ({
                                     className="flex justify-between w-full gap-4 text-xs"
                                     variant="outline"
                                     style={{
-                                        color:
-                                            relativeIntervalsString ===
-                                            scale.intervals
-                                                ? "#fdc700"
-                                                : undefined,
+                                        color: compareIntervals(
+                                            scale.intervals,
+                                            relativeIntervals,
+                                        )
+                                            ? "#fdc700"
+                                            : undefined,
                                     }}
                                     onClick={() => {
-                                        setRelativeIntervalsString(
-                                            scale.intervals,
-                                        );
+                                        setRelativeIntervals(scale.intervals);
                                     }}
                                 >
                                     <span>{scale.label}</span>
                                     <span className="truncate">
-                                        {scale.intervals}
+                                        {scale.intervals
+                                            .map((value) =>
+                                                settings?.semitones === "true"
+                                                    ? value
+                                                    : Interval.fromSemitones(
+                                                          value,
+                                                      ),
+                                            )
+                                            .join(", ")}
                                     </span>
                                 </Button>
                             ))}
@@ -155,52 +163,45 @@ export const ChordScaleIntervalSelectMobile = ({
                 >
                     <ToggleGroup
                         type="multiple"
-                        className="flex flex-col w-full h-full overflow-scroll *:hover:bg-transparent *:data-[state=on]:bg-transparent *:w-full *:data-[state=on]:text-yellow-300  *:text-xs *:border-t"
+                        className="flex flex-col w-full h-full overflow-scroll *:hover:bg-transparent *:data-[state=on]:bg-transparent *:w-full *:data-[state=on]:text-yellow-300  *:text-xs *:border  *:flex *:justify-between"
                         value={relativeIntervals.map((item) => String(item))}
                         onValueChange={(value) => {
-                            const newChordInput = value
-                                .sort((a, b) => Number(a) - Number(b))
-                                .join(", ");
-                            setRelativeIntervalsString(newChordInput);
-                            // updateIntervals(newChordInput); TODO
-                            setRelativeIntervals(
-                                value.map((item) => Number(item)),
+                            const newChordInput = value.map((value) =>
+                                Number(value),
                             );
+                            sortInterval(newChordInput);
+                            setRelativeIntervals(newChordInput);
                         }}
                     >
-                        <ToggleGroupItem value="0">Unison</ToggleGroupItem>
-                        <ToggleGroupItem value="1">
-                            Minor Second
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="2">
-                            Major Second
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="3">Minor Third</ToggleGroupItem>
-                        <ToggleGroupItem value="4">Major Third</ToggleGroupItem>
-                        <ToggleGroupItem value="5">
-                            Perfect Fourth
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="6">
-                            Augmented Fourth
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="7">
-                            Perfect Fifth
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="8">Minor Sixth</ToggleGroupItem>
-                        <ToggleGroupItem value="9">Major Sixth</ToggleGroupItem>
-                        <ToggleGroupItem value="10">
-                            Minor Seventh
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="11">
-                            Major Seventh
-                        </ToggleGroupItem>
-                        <ToggleGroupItem value="12">Octave</ToggleGroupItem>
+                        {[
+                            "Unison",
+                            "Minor Second",
+                            "Major Second",
+                            "Minor Third",
+                            "Major Third",
+                            "Perfect Fourth",
+                            "Augmented Fourth",
+                            "Perfect Fifth",
+                            "Minor Sixth",
+                            "Major Sixth",
+                            "Minor Seventh",
+                            "Major Seventh",
+                            "Octave",
+                        ].map((value, index) => (
+                            <ToggleGroupItem value={String(index)}>
+                                <span>{value}</span>
+                                <span>
+                                    {settings?.semitones === "true"
+                                        ? index
+                                        : Interval.fromSemitones(index)}
+                                </span>
+                            </ToggleGroupItem>
+                        ))}
                     </ToggleGroup>
-                    {relativeIntervalsString.length > 0 ? (
+                    {relativeIntervals.length > 0 ? (
                         <Button
                             variant="outline"
                             onClick={() => {
-                                setRelativeIntervalsString("");
                                 setRelativeIntervals([]);
                             }}
                         >
@@ -210,9 +211,6 @@ export const ChordScaleIntervalSelectMobile = ({
                         <Button
                             variant="outline"
                             onClick={() => {
-                                setRelativeIntervalsString(
-                                    "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12",
-                                );
                                 setRelativeIntervals([
                                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
                                 ]);

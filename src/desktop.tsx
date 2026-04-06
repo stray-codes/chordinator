@@ -29,7 +29,7 @@ import { useSettings } from "./libs/settings";
 import { ChordScaleIntervalSelect } from "./components/desktop/chord-scale-interval-select";
 
 export const Desktop = () => {
-    const { settings } = useSettings();
+    const { settings, saveSetting } = useSettings();
     const settingsLoaded = useRef(false);
 
     const [maxNumberOfFrets, setMaxNumberOfFrets] = useState<
@@ -40,9 +40,6 @@ export const Desktop = () => {
     const [tuning, setTuning] = useState<string[]>([]);
 
     const [absoluteIntervals, setAbsoluteIntervals] = useState<number[]>([]);
-    const [relativeIntervalsString, setRelativeIntervalsString] = useState("");
-    const [chordScaleIntervalGroup, setChordScaleIntervalGroup] =
-        useState("none");
     const [chordName, setChordName] = useState<string>("-");
     const [lock, setLock] = useState(false);
 
@@ -78,10 +75,6 @@ export const Desktop = () => {
         settingsLoaded.current = true;
     }, [settings]);
 
-    useEffect(() => {
-        setLock(false);
-    }, [relativeIntervalsString]);
-
     if (!settings || !settingsLoaded.current) return;
 
     return (
@@ -114,26 +107,25 @@ export const Desktop = () => {
                     absoluteInterval={absoluteIntervals}
                     maxNumberOfFrets={maxNumberOfFrets}
                     lock={lock}
+                    settings={settings}
                 />
                 <div className="flex flex-col gap-4 pb-4 w-full">
                     <div className="flex flex-row justify-between items-end gap-2 w-full flex-wrap">
                         <ChordScaleIntervalSelect
+                            settings={settings}
                             lock={lock}
                             setLock={setLock}
                             setAbsoluteIntervals={setAbsoluteIntervals}
                             setChordName={setChordName}
                             currentNote={currentNote}
-                            chordScaleIntervalGroup={chordScaleIntervalGroup}
-                            setChordScaleIntervalGroup={
-                                setChordScaleIntervalGroup
-                            }
-                            relativeIntervalsString={relativeIntervalsString}
-                            setRelativeIntervalsString={
-                                setRelativeIntervalsString
-                            }
                         />
 
-                        {width > 1300 && <More />}
+                        {width > 1300 && (
+                            <More
+                                settings={settings}
+                                saveSetting={saveSetting}
+                            />
+                        )}
 
                         <InstrumentSelect
                             strings={tuningString}
@@ -145,7 +137,9 @@ export const Desktop = () => {
                             setMaxNumberOfFrets={setMaxNumberOfFrets}
                         />
                     </div>
-                    {width <= 1300 && <More />}
+                    {width <= 1300 && (
+                        <More settings={settings} saveSetting={saveSetting} />
+                    )}
                 </div>
             </div>
 

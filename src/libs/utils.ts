@@ -55,3 +55,12 @@ export const getNoteColor = (
         else return { opacity: "0%", background: undefined };
     }
 };
+
+export const compareIntervals = (a: number[], b: number[]) => {
+    if (a.length !== b.length) return false;
+    return a.every((value, index) => value === b[index]);
+};
+
+export const sortInterval = (a: number[]) => {
+    a.sort((A, B) => A - B);
+};

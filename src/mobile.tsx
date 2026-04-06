@@ -65,43 +65,32 @@ export const Mobile = () => {
 
     const [absoluteIntervals, setAbsoluteIntervals] = useState<number[]>([]);
     const [chordName, setChordName] = useState<string>("-");
-    const [relativeIntervalsString, setRelativeIntervalsString] = useState(
-        absoluteIntervals.join(", "),
-    );
     const [relativeIntervals, setRelativeIntervals] = useState<number[]>([]);
     const [lock, setLock] = useState(false);
 
-    const updateIntervals = (newChordInput?: string) => {
+    useEffect(() => {
+        setLock(false);
+    }, [relativeIntervals]);
+
+    useEffect(() => {
         if (lock) return;
         setChordName("-");
-        const tmp = (newChordInput ?? relativeIntervalsString)
-            .split(/,\s*/)
-            .map((item) => {
-                if (item === null) return null;
-                if (item.length === 0) return null;
-                const semitone = Number(item);
-                if (!isNaN(semitone)) return Interval.fromSemitones(semitone);
-                const intervalName = Interval.name(item);
-                if (intervalName.length === 0) return null;
-                return intervalName;
-            })
-            .filter((item) => !!item) as string[];
-        setRelativeIntervals(tmp.map((item) => Interval.semitones(item)));
-        const newChord = [
-            ...tmp.map((item) => Note.transpose(currentNote, item)),
-        ];
-        setAbsoluteIntervals(newChord.map((item) => Note.midi(item)!));
-        const newChordNames = Chord.detect(newChord);
+        const newAbsoluteNotes =
+            relativeIntervals?.map((value) =>
+                Note.transpose(currentNote, Interval.fromSemitones(value)),
+            ) ?? [];
+
+        const newAbsoluteIntervals = newAbsoluteNotes.map(
+            (item) => Note.midi(item)!,
+        );
+
+        setAbsoluteIntervals(newAbsoluteIntervals);
+
+        const newChordNames = Chord.detect(newAbsoluteNotes);
         if (newChordNames.length >= 1) {
             setChordName(newChordNames.join(", "));
         }
-    };
-
-    useEffect(() => {
-        setLock(false);
-    }, [relativeIntervalsString]);
-
-    useEffect(updateIntervals, [relativeIntervalsString, currentNote]);
+    }, [relativeIntervals, currentNote, lock]);
 
     const synth = useMemo(() => new Tone.Synth().toDestination(), []);
 
@@ -157,10 +146,7 @@ export const Mobile = () => {
                     </TabsContent>
                     <TabsContent value="chords-scales" className="h-0">
                         <ChordScaleIntervalSelectMobile
-                            relativeIntervalsString={relativeIntervalsString}
-                            setRelativeIntervalsString={
-                                setRelativeIntervalsString
-                            }
+                            settings={settings}
                             relativeIntervals={relativeIntervals}
                             setRelativeIntervals={setRelativeIntervals}
                         />

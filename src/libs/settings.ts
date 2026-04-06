@@ -22,6 +22,7 @@ type SettingKey =
     | "tuning"
     | "stringGroup"
     | "maxNumberOfFrets"
+    | "semitones"
 
     // mobile only
     | "fullscreen"
@@ -35,6 +36,7 @@ const defaultSettings: Settings = {
     tuning: "E1, A1, D2, G2",
     stringGroup: "bass",
     maxNumberOfFrets: "",
+    semitones: "true",
 
     fullscreen: "true",
     splitMode: "true",
