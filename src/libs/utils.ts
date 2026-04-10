@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { Interval, Note } from "tonal";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -63,4 +64,30 @@ export const compareIntervals = (a: number[], b: number[]) => {
 
 export const sortInterval = (a: number[]) => {
     a.sort((A, B) => A - B);
+};
+
+export const isIncludedInIntervals = (input: string, intervals: number[]) => {
+    if (!input.includes(",")) return false;
+
+    const inputIntervals = input
+        .split(/,\s*/)
+        .map((item) => {
+            return Interval.semitones(Interval.distance("C0", item)) % 12;
+        })
+        .sort((a, b) => a - b);
+    for (const item of inputIntervals) {
+        if (Number.isNaN(item)) return false;
+    }
+    if (inputIntervals.length > intervals.length) return false;
+
+    for (let i = 0; i <= 12; i += 1) {
+        if (
+            inputIntervals.every((value) =>
+                intervals.includes((value + i) % 12),
+            )
+        )
+            return true;
+    }
+
+    return false;
 };

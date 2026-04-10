@@ -26,7 +26,11 @@ import { chords } from "../../../data/chords";
 import { scales } from "../../../data/scales";
 import { Settings } from "../../libs/settings";
 import { Interval } from "tonal";
-import { compareIntervals, sortInterval } from "../../libs/utils";
+import {
+    compareIntervals,
+    isIncludedInIntervals,
+    sortInterval,
+} from "../../libs/utils";
 
 export const ChordScaleIntervalSelectMobile = ({
     settings,
@@ -60,15 +64,20 @@ export const ChordScaleIntervalSelectMobile = ({
                     />
                     <div className="flex flex-col size-full overflow-scroll">
                         {chords
-                            .filter((item) =>
-                                item.label
-                                    .toLocaleLowerCase()
-                                    .replace(/\s+/g, "")
-                                    .includes(
-                                        search
-                                            .toLocaleLowerCase()
-                                            .replace(/\s+/g, ""),
-                                    ),
+                            .filter(
+                                (item) =>
+                                    isIncludedInIntervals(
+                                        search,
+                                        item.intervals,
+                                    ) ||
+                                    item.label
+                                        .toLocaleLowerCase()
+                                        .replace(/\s+/g, "")
+                                        .includes(
+                                            search
+                                                .toLocaleLowerCase()
+                                                .replace(/\s+/g, ""),
+                                        ),
                             )
 
                             .map((chord) => (
@@ -113,15 +122,20 @@ export const ChordScaleIntervalSelectMobile = ({
                     />
                     <div className="flex flex-col size-full overflow-scroll">
                         {scales
-                            .filter((item) =>
-                                item.label
-                                    .toLocaleLowerCase()
-                                    .replace(/\s+/g, "")
-                                    .includes(
-                                        search
-                                            .toLocaleLowerCase()
-                                            .replace(/\s+/g, ""),
-                                    ),
+                            .filter(
+                                (item) =>
+                                    isIncludedInIntervals(
+                                        search,
+                                        item.intervals,
+                                    ) ||
+                                    item.label
+                                        .toLocaleLowerCase()
+                                        .replace(/\s+/g, "")
+                                        .includes(
+                                            search
+                                                .toLocaleLowerCase()
+                                                .replace(/\s+/g, ""),
+                                        ),
                             )
 
                             .map((scale) => (

@@ -37,7 +37,11 @@ import { chords } from "../../../data/chords";
 import { scales } from "../../../data/scales";
 import { Settings } from "../../libs/settings";
 import { X } from "lucide-react";
-import { compareIntervals, sortInterval } from "../../libs/utils";
+import {
+    compareIntervals,
+    isIncludedInIntervals,
+    sortInterval,
+} from "../../libs/utils";
 
 export const ChordScaleIntervalSelect = ({
     lock,
@@ -105,6 +109,8 @@ export const ChordScaleIntervalSelect = ({
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, []);
 
+    const [tab, setTab] = useState("chords");
+
     return (
         <div className="border p-2 flex flex-col items-center gap-2 w-full lg:w-fit">
             <div className="flex items-center justify-between w-full text-xs">
@@ -116,14 +122,33 @@ export const ChordScaleIntervalSelect = ({
                 >
                     <Lock className="size-3" />
                 </Toggle>
-                <div className="w-full flex justify-end">
+                <div className="w-full flex justify-end gap-1">
                     <Dialog>
                         <DialogTrigger asChild>
                             <Button
                                 variant="outline"
                                 className="hover:text-yellow-300"
+                                onClick={() => setTab("chords")}
                             >
-                                Chords / Scales / Intervals
+                                Chords
+                            </Button>
+                        </DialogTrigger>
+                        <DialogTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className="hover:text-yellow-300"
+                                onClick={() => setTab("scales")}
+                            >
+                                Scales
+                            </Button>
+                        </DialogTrigger>
+                        <DialogTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className="hover:text-yellow-300"
+                                onClick={() => setTab("intervals")}
+                            >
+                                Intervals
                             </Button>
                         </DialogTrigger>
 
@@ -138,6 +163,8 @@ export const ChordScaleIntervalSelect = ({
                             <Tabs
                                 defaultValue="chords"
                                 className="size-full flex"
+                                value={tab}
+                                onValueChange={(value) => setTab(value)}
                             >
                                 <div className="flex w-full justify-between">
                                     <TabsList className="w-4/5">
@@ -169,18 +196,23 @@ export const ChordScaleIntervalSelect = ({
                                     />
                                     <div className="flex flex-col h-full w-full overflow-scroll">
                                         {chords
-                                            .filter((item) =>
-                                                item.label
-                                                    .toLocaleLowerCase()
-                                                    .replace(/\s+/g, "")
-                                                    .includes(
-                                                        search
-                                                            .toLocaleLowerCase()
-                                                            .replace(
-                                                                /\s+/g,
-                                                                "",
-                                                            ),
-                                                    ),
+                                            .filter(
+                                                (item) =>
+                                                    isIncludedInIntervals(
+                                                        search,
+                                                        item.intervals,
+                                                    ) ||
+                                                    item.label
+                                                        .toLocaleLowerCase()
+                                                        .replace(/\s+/g, "")
+                                                        .includes(
+                                                            search
+                                                                .toLocaleLowerCase()
+                                                                .replace(
+                                                                    /\s+/g,
+                                                                    "",
+                                                                ),
+                                                        ),
                                             )
 
                                             .map((chord) => (
@@ -236,18 +268,23 @@ export const ChordScaleIntervalSelect = ({
                                     />
                                     <div className="flex flex-col h-full w-full overflow-scroll">
                                         {scales
-                                            .filter((item) =>
-                                                item.label
-                                                    .toLocaleLowerCase()
-                                                    .replace(/\s+/g, "")
-                                                    .includes(
-                                                        search
-                                                            .toLocaleLowerCase()
-                                                            .replace(
-                                                                /\s+/g,
-                                                                "",
-                                                            ),
-                                                    ),
+                                            .filter(
+                                                (item) =>
+                                                    isIncludedInIntervals(
+                                                        search,
+                                                        item.intervals,
+                                                    ) ||
+                                                    item.label
+                                                        .toLocaleLowerCase()
+                                                        .replace(/\s+/g, "")
+                                                        .includes(
+                                                            search
+                                                                .toLocaleLowerCase()
+                                                                .replace(
+                                                                    /\s+/g,
+                                                                    "",
+                                                                ),
+                                                        ),
                                             )
 
                                             .map((scale) => (
@@ -377,7 +414,7 @@ export const ChordScaleIntervalSelect = ({
                     setRelativeIntervals(newChordInput);
                 }}
             >
-                <div className="h-full *:h-full">
+                <div className="h-full *:h-full flex">
                     {relativeIntervals.length > 0 ? (
                         <Button
                             variant="outline"
@@ -401,10 +438,7 @@ export const ChordScaleIntervalSelect = ({
                             All
                         </Button>
                     )}
-                    <ToggleGroupItem
-                        className="border text-xs h-full"
-                        value="0"
-                    >
+                    <ToggleGroupItem className="border text-xs" value="0">
                         {settings?.semitones === "true"
                             ? 0
                             : Interval.fromSemitones(0)}
