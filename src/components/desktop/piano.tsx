@@ -111,7 +111,7 @@ const BlackKey = ({
 
     return (
         <div
-            className="h-12 w-3 bg-black flex items-end pb-2 justify-center cursor-pointer"
+            className="h-12 w-3 bg-black flex items-end pb-2 justify-center cursor-pointer select-none"
             onClick={() => {
                 synth.triggerAttackRelease(thisNote, "8n");
                 setCurrentMidi(thisMidi);
@@ -120,7 +120,10 @@ const BlackKey = ({
                 setCurrentMidi(thisMidi);
             }}
         >
-            <div className="size-2 rounded-full absolute" style={noteColor} />
+            <div
+                className="size-2 rounded-full absolute select-none"
+                style={noteColor}
+            />
         </div>
     );
 };
@@ -154,7 +157,7 @@ const WhiteKey = ({
 
     return (
         <div
-            className="h-20 w-4 bg-white/40 flex items-end pb-2 justify-center cursor-pointer"
+            className="h-20 w-4 bg-white/40 flex items-end pb-2 justify-center cursor-pointer select-none"
             onClick={() => {
                 synth.triggerAttackRelease(thisNote, "8n");
                 setCurrentMidi(thisMidi);
@@ -163,7 +166,10 @@ const WhiteKey = ({
                 setCurrentMidi(thisMidi);
             }}
         >
-            <div className="size-2 rounded-full absolute" style={noteColor} />
+            <div
+                className="size-2 rounded-full absolute select-none"
+                style={noteColor}
+            />
         </div>
     );
 };
