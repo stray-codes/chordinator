@@ -42,7 +42,7 @@ This project uses [Tonal](https://github.com/tonaljs/tonal) and [Tone.js](https:
 
 ## Building and Selfhosting
 This project was made with [Preact](https://preactjs.com/).
-You can build and selfhost it yourself.
+You can build and selfhost it.
 
 -   `pnpm install` - Installs all dependencies
 
