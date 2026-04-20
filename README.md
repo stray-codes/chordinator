@@ -13,16 +13,18 @@
 
 
 ## How to use?
+
+Select your instrument on the bottom right of the screen, there are more instruments accessible through the plus (+) icon.
+Then select whatever chord/scale/interval you wan't to visualize on the bottom left of the screen.
+After that just hover over any note on the keyboard or string instrument. Once you are happy with your selection just hit space
+to lock your selection. Enjoy!
+
 <div align="center">
 
   [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/wrUOxG7AsiQ/0.jpg)](https://www.youtube.com/watch?v=wrUOxG7AsiQ)
 
 </div>
 
-Select your instrument on the bottom right of the screen, there are more instruments accessible through the plus (+) icon.
-Then select whatever chord/scale/interval you wan't to visualize on the bottom left of the screen.
-After that just hover over any note on the keyboard or string instrument. Once you are happy with your selection just hit space
-to lock your selection. Enjoy!
 
 
 ## FAQ
